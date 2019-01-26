@@ -1,7 +1,7 @@
 # MrBuilder
 Builder and Bootstrap Library for Deep Learning with an emphasis on Keras / Tensorflow
 
-```
+```python
 from mrbuilder import load_models_from_path, get_model
 from mrbuilder.keras_builders import *
 
@@ -14,7 +14,7 @@ vgg.summary()
 ```
 
 vgg16.json
-```
+```json
 {
   "name": "vgg16",
   "layers": [
