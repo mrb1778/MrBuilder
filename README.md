@@ -8,7 +8,7 @@ from mrbuilder.keras_builders import *
 load_models_from_path(args.models)
 
 vgg_builder = get_model("vgg16")
-vgg = vgg_builder(input_shape, {"initialDropoutRate": 0.3, "dropoutRate": 0.4}, outputSize)
+vgg = vgg_builder(input_shape, {"initialDropoutRate": 0.3, "dropoutRate": 0.4}, output_size)
 vgg.summary()
 
 ```
