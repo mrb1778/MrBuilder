@@ -1,11 +1,11 @@
 from typing import Callable, Dict
 
 from mrbuilder.builder_config import BuilderConfig
-from mrbuilder.builder_registry import BuilderRegistry
+# from mrbuilder.builder_registry import BuilderRegistry
 
 
 class ModelBuilder:
-    builder_registry: BuilderRegistry
+    # builder_registry: BuilderRegistry
     builder_config: BuilderConfig
 
     layers: list
@@ -79,7 +79,7 @@ class ModelBuilder:
 
             self._create_layers(self.model_config["layers"])
 
-            model_creator = self.builder_registry.builder_config.get_model_creator()
+            model_creator = self.builder_config.get_model_creator()
             return model_creator(
                 inputs=input_layers,
                 layers=self.layers,
