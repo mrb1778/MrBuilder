@@ -3,7 +3,7 @@ Model and Repository Builder for Deep Learning with an emphasis on Keras / Tenso
 
 ```python
 import mrbuilder
-import mrbuilder.impl.keras_builder  # used to initialize Keras baackend
+import mrbuilder.impl.keras_builder  # used to initialize Keras builder
 
 mrbuilder.load_models_from_path("/path/to/models")
 
@@ -12,11 +12,9 @@ model_builder = mrbuilder.get_model("vgg16")
 
 input_shape = [32, 32, 3]
 model_params = {
-    "outputSize": 50,
-    "optimizer": "adam",
-    "learning_rate": 2e-4,
-    "beta_1": 0.5,
-    "loss_fn": "mse"
+    "initialDropoutRate": 0.35, 
+    "dropoutRate": 0.45,
+    "outputSize": 50
 }
 model = model_builder(input_shape, model_params)
 
