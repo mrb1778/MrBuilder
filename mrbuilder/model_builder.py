@@ -20,11 +20,14 @@ class ModelBuilder:
         self.model_config = model_config
         self.layers = []
         self.layers_by_name = {}
-        self.build_properties = {}
         self.layer_templates = {}
+
+        self.build_properties = {}
 
     def build(self) -> Callable:
         def _create_model(input_shape, override_properties=None, output_size=None):
+            self.build_properties = {}
+
             model_properties = self.model_config.get("properties")
             if model_properties is not None:
                 self.build_properties = {
@@ -44,40 +47,12 @@ class ModelBuilder:
                     'outputSize': output_size
                 }
 
-            input_config = self.model_config.get("input")
-            num_inputs = 1
-            input_join_type = None
-            input_names = None
-            if input_config is not None:
-                if "num" in input_config:
-                    num_inputs = input_config.get("num")
-                if "join" in input_config:
-                    input_join_type = input_config.get("join")
-
-                input_names = input_config.get("names")
-
-            input_layers = []
-            for i in range(num_inputs):
-                input_layer = self.builder_config.get_model_initializer()(
-                    input_shape[i] if num_inputs > 1 else input_shape,
-                    self.build_properties)
-                input_layers.append(input_layer)
-                self._add_layer(input_layer)
-
-                self.layers_by_name["input" + str(i)] = input_layer
-                if input_names is not None and len(input_names) > i:
-                    self.layers_by_name[input_names[i]] = input_layer
-
-            if input_join_type is not None:
-                layer_builder = self.builder_registry.get_layer_builder(input_join_type)
-                input_join_layer = layer_builder([], input_layers)
-                self._add_layer(input_join_layer)
-                self.layers_by_name["inputJoin"] = input_join_layer
+            input_layers = self._create_inputs(input_shape)
 
             layer_templates_arr = self.model_config["templates"] if "templates" in self.model_config else []
             self.layer_templates = {item["name"]: item for item in layer_templates_arr}
 
-            self._create_layers(self.model_config["layers"])
+            self._create_layers()
 
             model_creator = self.builder_config.get_model_creator()
             return model_creator(
@@ -87,6 +62,37 @@ class ModelBuilder:
                 output_config=self.model_config["output"] if "output" in self.model_config else {})
 
         return _create_model
+
+    def _create_inputs(self, input_shape):
+        input_config = self.model_config.get("inputs")
+        num_inputs = 1
+        input_join_type = None
+        input_names = None
+        if input_config is not None:
+            if "num" in input_config:
+                num_inputs = input_config.get("num")
+            if "join" in input_config:
+                input_join_type = input_config.get("join")
+
+            input_names = input_config.get("names")
+        input_layers = []
+        model_input_builder = self.builder_config.get_model_input_builder()
+        for i in range(num_inputs):
+            input_layer = model_input_builder(
+                input_shape[i] if num_inputs > 1 else input_shape,
+                self.build_properties)
+            input_layers.append(input_layer)
+            self._add_layer(input_layer)
+
+            self.layers_by_name["input" + str(i)] = input_layer
+            if input_names is not None and len(input_names) > i:
+                self.layers_by_name[input_names[i]] = input_layer
+        if input_join_type is not None:
+            layer_builder = self.builder_registry.get_layer_builder(input_join_type)
+            input_join_layer = layer_builder([], input_layers)
+            self._add_layer(input_join_layer)
+            self.layers_by_name["inputJoin"] = input_join_layer
+        return input_layers
 
     def _add_layer(self, layer, name=None):
         self.layers.append(layer)
@@ -98,7 +104,8 @@ class ModelBuilder:
         if name is not None:
             self.layers_by_name[name] = layer
 
-    def _create_layers(self, layers_config):
+    def _create_layers(self):
+        layers_config = self.model_config["layers"]
         for index, layer_config in enumerate(layers_config):
             if "--ignore" not in layer_config:
                 layer = self._create_layer(layer_config)

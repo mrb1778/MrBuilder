@@ -72,3 +72,14 @@ vgg16.json
   ]
 }
 ```
+
+### TODO
+* API Documentation
+* Model Definition Documentation
+* Model Repository
+* More complex expressions
+* Variable resolution only through expressions for better readability
+* Sample model usages
+* Theanos implementation
+* Pure Tensorflow implementation
+

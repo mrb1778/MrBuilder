@@ -22,6 +22,11 @@ def _eval_and_parse_expression(expression, variable_resolver):
     expression = expression.replace(_EXPRESSION_START, "")\
                            .replace(_EXPRESSION_END, "")
     split_expression = expression.split()
+    if len(split_expression) == 1:
+        expression, converted = _convert(expression)
+        if not converted:
+            expression = variable_resolver(expression)
+        return expression
     if len(split_expression) == 3:
         left, oper, right = split_expression
         left, converted = _convert(left)
@@ -34,7 +39,7 @@ def _eval_and_parse_expression(expression, variable_resolver):
 
         return _eval_ternary(left, oper, right)
     else:
-        raise ValueError("Unsupported Expression must have 3 parts separated by spaces")
+        raise ValueError("Unsupported Expression must have 1 or 3 parts separated by spaces")
 
 
 def _eval_ternary(left, middle, right):

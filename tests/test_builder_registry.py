@@ -16,12 +16,12 @@ class BuilderRegistryTest(unittest.TestCase):
             "properties": {"initialDropoutRate": 0.3, "dropoutRate": 0.4},
             "layers": [
                 {"type": "ConvActBN", "size": 64},
-                {"type": "Dropout", "rate": "initialDropoutRate"},
+                {"type": "Dropout", "rate": "{{initialDropoutRate}}"},
                 {"type": "ConvActBN", "size": 64},
                 {"type": "MaxPooling2D", "size": 2},
 
-                {"type": "Dropout", "rate": "dropoutRate"},
-                {"type": "Dense", "size": "outputSize"},
+                {"type": "Dropout", "rate": "{{dropoutRate}}"},
+                {"type": "Dense", "size": "{{outputSize}}"},
                 {"type": "Activation", "function": "softmax"}
             ]
         }

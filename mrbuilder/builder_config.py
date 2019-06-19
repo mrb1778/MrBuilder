@@ -13,7 +13,7 @@ class BuilderConfig:
     def get_model_creator(self) -> Callable:
         pass
 
-    def get_model_initializer(self) -> Callable:
+    def get_model_input_builder(self) -> Callable:
         pass
 
     def get_layer_builder(self, layer_type: str) -> Callable:

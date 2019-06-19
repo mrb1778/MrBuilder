@@ -15,7 +15,15 @@ class ExpressionsTest(unittest.TestCase):
         self.variable_resolver = lambda name: self.variables[name] if name in self.variables else name
 
     def test_non_expression(self):
+        # self.assertEqual(eval_expression("1", self.variable_resolver), 1)
+        # self.assertEqual(eval_expression("2.5", self.variable_resolver), 2.5)
         self.assertEqual(eval_expression("bob", self.variable_resolver), "bob")
+
+    def test_constant_single_expression(self):
+        self.assertEqual(eval_expression("{{2.5}}", self.variable_resolver), 2.5)
+
+    def test_variable_single_expression(self):
+        self.assertEqual(eval_expression("{{var1}}", self.variable_resolver), self.variables["var1"])
 
     def test_constant_constant_addition(self):
         self.assertEqual(eval_expression("{{2 + 3}}", self.variable_resolver), 2 + 3)

@@ -3,7 +3,7 @@ from typing import Callable, Dict
 from tensorflow.keras import Model, Input
 from tensorflow.keras.initializers import RandomNormal
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dropout, MaxPooling2D, Flatten, Dense, Activation, \
-    LeakyReLU, BatchNormalization, GlobalAveragePooling2D, UpSampling2D, Reshape, Concatenate, Add
+    LeakyReLU, BatchNormalization, GlobalAveragePooling2D, UpSampling2D, Reshape, Concatenate, Add, LSTM
 from tensorflow.keras.regularizers import l2
 
 from mrbuilder.utils.singleton import Singleton
@@ -33,7 +33,7 @@ class KerasBuilderConfig(BuilderConfig, metaclass=Singleton):
 
         return create_keras_model
 
-    def get_model_initializer(self) -> Callable:
+    def get_model_input_builder(self) -> Callable:
         return lambda input_shape, _: Input(shape=input_shape)
 
     def get_layer_builders(self) -> Dict[str, Callable]:
@@ -88,7 +88,12 @@ class KerasBuilderConfig(BuilderConfig, metaclass=Singleton):
             "Concatenate": lambda layer_options, layer_connection:
                 Concatenate()(layer_connection),
             "Add": lambda layer_options, layer_connection:
-                Add()(layer_connection)
+                Add()(layer_connection),
+            "LSTM": lambda layer_options, layer_connection:
+                LSTM(
+                    units=layer_options("size"),
+                    return_sequences=layer_options("returnSequences", False)
+                )(layer_connection)
         }
 
     def get_layer_options_builders(self) -> Dict[str, Callable]:
