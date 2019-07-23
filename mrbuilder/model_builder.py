@@ -74,7 +74,7 @@ class ModelBuilder:
                 self.layers_by_name[input_names[i]] = input_layer
         if input_join_type is not None:
             layer_builder = self.builder_registry.get_layer_builder(input_join_type)
-            input_join_layer = layer_builder([], input_layers)
+            input_join_layer = layer_builder(self._layer_config_registry, input_layers)
             self._add_layer(input_join_layer)
             self.layers_by_name["inputJoin"] = input_join_layer
         return input_layers
