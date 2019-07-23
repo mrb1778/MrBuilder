@@ -2,7 +2,7 @@ import unittest
 
 import mrbuilder
 import mrbuilder.impl.keras_builder
-from mrbuilder.builder_registry import MissingLayerTypeException
+from mrbuilder.model_builder import MissingLayerTypeException
 
 
 class BuilderTest(unittest.TestCase):
@@ -61,11 +61,7 @@ class BuilderTest(unittest.TestCase):
         cls.input_shape = [32, 32, 3]
 
         cls.base_params = {
-            "outputSize": 50,
-            "optimizer": "adam",
-            "learning_rate": 2e-4,
-            "beta_1": 0.5,
-            "loss_fn": "mse"
+            "outputSize": 50
         }
 
     def test_model_build_basic(self):

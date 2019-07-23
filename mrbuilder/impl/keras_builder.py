@@ -16,7 +16,7 @@ class KerasBuilderConfig(BuilderConfig, metaclass=Singleton):
     def __init__(self) -> None:
         super().__init__()
         self.layers_builders.update(self.get_layer_builders())
-        self.layer_option_builders.update(self.get_layer_options_builders())
+        self.layer_attribute_builders.update(self.get_layer_attribute_builders())
 
     def get_model_creator(self) -> Callable:
         def create_keras_model(inputs, layers, layers_by_name, output_config):
@@ -38,76 +38,76 @@ class KerasBuilderConfig(BuilderConfig, metaclass=Singleton):
 
     def get_layer_builders(self) -> Dict[str, Callable]:
         return {
-            "Conv2D": lambda layer_options, layer_connection:
+            "Conv2D": lambda config, connection:
                 Conv2D(
-                    layer_options("size"),
-                    kernel_size=layer_options("kernel", 3),
-                    strides=layer_options("strides", 1),
-                    activation=layer_options("activation"),
-                    padding=layer_options("padding", "same"),
-                    dilation_rate=layer_options("dilation", (1, 1)),
-                    kernel_initializer=layer_options("kernelInitializer", "glorot_uniform")
-                )(layer_connection),
-            "Conv2DTranspose": lambda layer_options, layer_connection:
+                    filters=config("size"),
+                    kernel_size=config("kernel", 3, repeat=2),
+                    strides=config("strides", 1, repeat=2),
+                    padding=config("padding", "same"),
+                    dilation_rate=config("dilation", (1, 1)),
+                    activation=config("activation"),
+                    kernel_initializer=config("kernelInitializer", "glorot_uniform")
+                )(connection),
+            "Conv2DTranspose": lambda config, connection:
                 Conv2DTranspose(
-                    layer_options("size"),
-                    kernel_size=layer_options("kernel", 3),
-                    strides=layer_options("strides", 2),
-                    padding=layer_options("padding", "same"),
-                    activation=layer_options("activation"),
-                    kernel_initializer=layer_options("kernelInitializer", "glorot_uniform")
-                )(layer_connection),
-            "Dropout": lambda layer_options, layer_connection:
-                Dropout(layer_options("rate", 0.25))(layer_connection),
-            "MaxPooling2D": lambda layer_options, layer_connection:
+                    filters=config("size"),
+                    kernel_size=config("kernel", 3),
+                    strides=config("strides", 2),
+                    padding=config("padding", "same"),
+                    activation=config("activation"),
+                    kernel_initializer=config("kernelInitializer", "glorot_uniform")
+                )(connection),
+            "Dropout": lambda config, connection:
+                Dropout(config("rate", 0.25))(connection),
+            "MaxPooling2D": lambda config, connection:
                 MaxPooling2D(
-                    pool_size=layer_options("size", 2, repeat=2),
-                    strides=layer_options("strides", 1, repeat=2)
-                )(layer_connection),
-            "Flatten": lambda layer_options, layer_connection:
-                Flatten()(layer_connection),
-            "Dense": lambda layer_options, layer_connection:
+                    pool_size=config("size", 2, repeat=2),
+                    strides=config("strides", 1, repeat=2)
+                )(connection),
+            "Flatten": lambda config, connection:
+                Flatten()(connection),
+            "Dense": lambda config, connection:
                 Dense(
-                    layer_options("size"),
-                    activation=layer_options("activation"),
-                    kernel_regularizer=layer_options("kernelRegularizer"),
-                    kernel_initializer=layer_options("kernelInitializer", "glorot_uniform")
-                )(layer_connection),
-            "Activation": lambda layer_options, layer_connection:
-                Activation(layer_options("function"))(layer_connection),
-            "LeakyReLU": lambda layer_options, layer_connection:
-                LeakyReLU(alpha=layer_options("alpha", 0.3))(layer_connection),
-            "BatchNormalization": lambda layer_options, layer_connection:
-                BatchNormalization(momentum=layer_options("momentum", 0.99))(layer_connection),
-            "GlobalAveragePooling2D": lambda layer_options, layer_connection:
-                GlobalAveragePooling2D()(layer_connection),
-            "UpSampling2D": lambda layer_options, layer_connection:
-                UpSampling2D(layer_options("size", 2))(layer_connection),
-            "Reshape": lambda layer_options, layer_connection:
-                Reshape(target_shape=layer_options("shape"))(layer_connection),
-            "Concatenate": lambda layer_options, layer_connection:
-                Concatenate()(layer_connection),
-            "Add": lambda layer_options, layer_connection:
-                Add()(layer_connection),
-            "LSTM": lambda layer_options, layer_connection:
+                    config("size"),
+                    activation=config("activation"),
+                    kernel_regularizer=config("kernelRegularizer"),
+                    kernel_initializer=config("kernelInitializer", "glorot_uniform")
+                )(connection),
+            "Activation": lambda config, connection:
+                Activation(config("function"))(connection),
+            "LeakyReLU": lambda config, connection:
+                LeakyReLU(alpha=config("alpha", 0.3))(connection),
+            "BatchNormalization": lambda config, connection:
+                BatchNormalization(momentum=config("momentum", 0.99))(connection),
+            "GlobalAveragePooling2D": lambda config, connection:
+                GlobalAveragePooling2D()(connection),
+            "UpSampling2D": lambda config, connection:
+                UpSampling2D(config("size", 2))(connection),
+            "Reshape": lambda config, connection:
+                Reshape(target_shape=config("shape"))(connection),
+            "Concatenate": lambda config, connection:
+                Concatenate(axis=config("axis", -1))(connection),
+            "Add": lambda config, connection:
+                Add()(connection),
+            "LSTM": lambda config, connection:
                 LSTM(
-                    units=layer_options("size"),
-                    return_sequences=layer_options("returnSequences", False)
-                )(layer_connection)
+                    units=config("size"),
+                    return_sequences=config("returnSequences", False)
+                )(connection)
         }
 
-    def get_layer_options_builders(self) -> Dict[str, Callable]:
-        def kernel_initializer(layer_options, default_value):
-            option_value = layer_options("kernelInitializer")
+    def get_layer_attribute_builders(self) -> Dict[str, Callable]:
+        def kernel_initializer(config, default_value):
+            option_value = config("kernelInitializer")
             if option_value == "RandomNormal":
-                return RandomNormal(stddev=layer_options("kernelInitializerStDev", 0.05))
+                return RandomNormal(stddev=config("kernelInitializerStDev", 0.05))
             else:
                 return default_value
 
-        def kernel_regularizer(layer_options, default_value):
-            option_value = layer_options("kernelRegularizer")
+        def kernel_regularizer(config, default_value):
+            option_value = config("kernelRegularizer")
             if option_value == "l2":
-                return l2(layer_options("l2WeightDecay", 0.01))
+                return l2(config("l2WeightDecay", 0.01))
             else:
                 return default_value
 

@@ -66,19 +66,19 @@ def conv_act_bn(
 
 mrbuilder.register_layer_builder(
     "ConvActBN",
-    lambda layer_options, layer_connection:
-    conv_act_bn(x=layer_connection,
-                size=layer_options("size"),
-                kernel_size=layer_options("kernel", 3),
-                strides=layer_options("strides", 1),
-                dilation_rate=layer_options("dilation", (1, 1)),
-                activation=layer_options("activation", "relu"),
-                activation_alpha=layer_options("activationAlpha", 0.3),
-                padding=layer_options("padding", "same"),
-                momentum=layer_options("momentum", 0.99),
-                do_dropout=layer_options("doDropout", False),
-                dropout_rate=layer_options("dropoutRate", 0.4),
-                do_batch_norm=layer_options("doBatchNorm", True),
-                sep_conv=layer_options("sepConv", False),
-                conv_transpose=layer_options("convTranspose", False),
-                l2_weight_decay=layer_options("weightDecay")))
+    lambda config, connection:
+    conv_act_bn(x=connection,
+                size=config("size"),
+                kernel_size=config("kernel", 3),
+                strides=config("strides", 1),
+                dilation_rate=config("dilation", (1, 1)),
+                activation=config("activation", "relu"),
+                activation_alpha=config("activationAlpha", 0.3),
+                padding=config("padding", "same"),
+                momentum=config("momentum", 0.99),
+                do_dropout=config("doDropout", False),
+                dropout_rate=config("dropoutRate", 0.4),
+                do_batch_norm=config("doBatchNorm", True),
+                sep_conv=config("sepConv", False),
+                conv_transpose=config("convTranspose", False),
+                l2_weight_decay=config("weightDecay")))

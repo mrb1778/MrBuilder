@@ -1,8 +1,8 @@
 from typing import Callable, Dict
 
 from mrbuilder.builder_config import BuilderConfig
-from mrbuilder.expressions import sexpression
-from mrbuilder.model_builder import ModelBuilder
+from mrbuilder.expressions.sexpression import SimpleExpressionEvaluator
+from mrbuilder.model_builder import ModelBuilder, MissingLayerTypeException
 from mrbuilder.utils.singleton import Singleton
 
 
@@ -10,18 +10,18 @@ class BuilderRegistry(metaclass=Singleton):
     builder_config: BuilderConfig
 
     layers_builders: Dict[str, Callable]
-    layer_option_builders: Dict[str, Callable]
+    layer_attribute_builders: Dict[str, Callable]
 
-    expression_evaluator: Callable
+    expression_evaluator: SimpleExpressionEvaluator
 
     models: Dict[str, Callable]
 
     def __init__(self) -> None:
         super().__init__()
         self.layers_builders = {}
-        self.layer_option_builders = {}
+        self.layer_attribute_builders = {}
 
-        self.expression_evaluator = sexpression.eval_expression
+        self.expression_evaluator = SimpleExpressionEvaluator()
 
         self.builder_config = None
         self.models = {}
@@ -41,20 +41,20 @@ class BuilderRegistry(metaclass=Singleton):
         return layer_type in self.layers_builders or \
                self.builder_config.has_layer_builder(layer_type)
 
-    def register_layer_options_builder(self, name: str, layer_option_builder: Callable) -> None:
-        self.layer_option_builders[name] = layer_option_builder
+    def register_layer_attribute_builder(self, name: str, layer_attribute_builder: Callable) -> None:
+        self.layer_attribute_builders[name] = layer_attribute_builder
 
-    def get_layer_options_builder(self, name: str) -> Callable:
-        if name in self.layer_option_builders:
-            return self.layer_option_builders[name]
-        elif self.builder_config.has_layer_options_builder(name):
-            return self.builder_config.get_layer_options_builder(name)
+    def get_layer_attribute_builder(self, name: str) -> Callable:
+        if name in self.layer_attribute_builders:
+            return self.layer_attribute_builders[name]
+        elif self.builder_config.has_layer_attribute_builder(name):
+            return self.builder_config.get_layer_attribute_builder(name)
         else:
             raise Exception("Unknown Layer Option: {}".format(name))
 
-    def has_layer_options_builder(self, name: str) -> bool:
-        return name in self.layer_option_builders or \
-               self.builder_config.has_layer_options_builder(name)
+    def has_layer_attribute_builder(self, name: str) -> bool:
+        return name in self.layer_attribute_builders or \
+               self.builder_config.has_layer_attribute_builder(name)
 
     # Models
     def build_register_model(self, model_config: Dict, name: str = None) -> Callable:
@@ -102,5 +102,3 @@ class MissingModelException(Exception):
     pass
 
 
-class MissingLayerTypeException(Exception):
-    pass

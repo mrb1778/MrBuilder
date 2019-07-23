@@ -1,6 +1,7 @@
 from typing import Callable, Dict
 
 from mrbuilder.builder_config import BuilderConfig
+from mrbuilder.variable_registry import VariableRegistry
 # from mrbuilder.builder_registry import BuilderRegistry
 
 
@@ -11,50 +12,34 @@ class ModelBuilder:
     layers: list
     layers_by_name: Dict
     properties: Dict
+    variable_registry: VariableRegistry
 
     def __init__(self, builder_registry, builder_config: BuilderConfig, model_config: Dict) -> None:
         super().__init__()
         self.builder_registry = builder_registry
         self.builder_config = builder_config
-
         self.model_config = model_config
+
+        model_properties = self.model_config.get("properties")
+        self.variable_registry = VariableRegistry(self.builder_registry, model_properties)
         self.layers = []
         self.layers_by_name = {}
         self.layer_templates = {}
 
-        self.build_properties = {}
-
     def build(self) -> Callable:
         def _create_model(input_shape, override_properties=None, output_size=None):
-            self.build_properties = {}
-
-            model_properties = self.model_config.get("properties")
-            if model_properties is not None:
-                self.build_properties = {
-                    **self.build_properties,
-                    **model_properties
-                }
-
-            if override_properties is not None:
-                self.build_properties = {
-                    **self.build_properties,
-                    **override_properties
-                }
-
-            if output_size is not None:
-                self.build_properties = {
-                    **self.build_properties,
-                    'outputSize': output_size
-                }
+            self.variable_registry.push_context(override_properties)
+            self.variable_registry.push_value('outputSize', output_size)
 
             input_layers = self._create_inputs(input_shape)
 
             layer_templates_arr = self.model_config["templates"] if "templates" in self.model_config else []
             self.layer_templates = {item["name"]: item for item in layer_templates_arr}
 
-            self._create_layers()
+            self._create_layers(self.model_config["layers"])
 
             model_creator = self.builder_config.get_model_creator()
+
             return model_creator(
                 inputs=input_layers,
                 layers=self.layers,
@@ -80,7 +65,7 @@ class ModelBuilder:
         for i in range(num_inputs):
             input_layer = model_input_builder(
                 input_shape[i] if num_inputs > 1 else input_shape,
-                self.build_properties)
+                self.variable_registry.find)
             input_layers.append(input_layer)
             self._add_layer(input_layer)
 
@@ -104,62 +89,63 @@ class ModelBuilder:
         if name is not None:
             self.layers_by_name[name] = layer
 
-    def _create_layers(self):
-        layers_config = self.model_config["layers"]
+    def _create_layers(self, layers_config, layers_options=None):
         for index, layer_config in enumerate(layers_config):
-            if "--ignore" not in layer_config:
-                layer = self._create_layer(layer_config)
-                self._add_layer(layer, layer_config.get("name"))
+            context_depth_initial = self.variable_registry.get_context_depth()
+
+            self.variable_registry.set_scoped()
+            self.variable_registry.push_context(layers_options)
+
+            if "template" in layer_config:
+                self.variable_registry.push_context(self.layer_templates[layer_config["template"]])
+            self.variable_registry.push_context(layer_config)
+            self.variable_registry.push_value("template", False)
+
+            if not self.variable_registry.find("--ignore"):
+                layers = self.variable_registry.find("layers")
+                if layers:
+                    self.variable_registry.push_value("layers", False)
+                    self._create_layers(layers, layer_config)
+                else:
+                    layer = self._create_layer(layer_config)
+                    self._add_layer(layer, self.variable_registry.find("name"))
+
+            self.variable_registry.pop_context_to_depth(context_depth_initial)
+            self.variable_registry.set_scoped(False)
 
     def _create_layer(self, layer_config):
         layer_connection = self._get_layer_connection(layer_config)
 
-        if "template" in layer_config:
-            layer_config = {
-                **self.layer_templates[layer_config["template"]],
-                **layer_config
-            }
+        layer_type = self._layer_config_registry("type")
+        if not self.builder_registry.has_layer_builder(layer_type):
+            raise MissingLayerTypeException(
+                "Unknown Layer Type: {} in layer: {}".format(layer_type, layer_config))
 
-        def _layer_options_from_properties(name, default_value=None, repeat=0):
-            if name in layer_config:
-                value = layer_config[name]
-            else:
-                value = default_value
-
-            def _find_value(_name, _default_value):
-                if _name in self.build_properties:
-                    return self.build_properties[_name]
-                else:
-                    return _default_value
-
-            def _get_value(_name, _default_value):
-                return self.builder_registry.expression_evaluator(
-                    _default_value,
-                    lambda _name: _find_value(_name, _default_value))
-
-            if isinstance(value, (list,)):
-                value = [_get_value(x, x) for x in value]
-            else:
-                value = _get_value(value, value)
-
-            if repeat > 1:
-                value = [value] * repeat
-
-            return value
-
-        def _layer_options(name, default_value=None, repeat=0):
-            if self.builder_registry.has_layer_options_builder(name):
-                return self.builder_registry.get_layer_options_builder(name)(
-                    _layer_options_from_properties,
-                    default_value)
-            else:
-                return _layer_options_from_properties(name, default_value, repeat)
-
-        layer_type = _layer_options("type")
         layer_builder = self.builder_registry.get_layer_builder(layer_type)
+        layer = layer_builder(self._layer_config_registry, layer_connection)
+        return layer
+    
+    def _layer_config_registry(self, name, default_value=None, repeat=0):
+        if self.builder_registry.has_layer_attribute_builder(name):
+            return self.builder_registry.get_layer_attribute_builder(name)(
+                self._layer_config_registry_expander,
+                default_value)
+        else:
+            return self._layer_config_registry_expander(name, default_value, repeat)
 
-        return layer_builder(_layer_options, layer_connection)
+    def _layer_config_registry_expander(self, name, default_value=None, repeat=0):
+        value = self.variable_registry.find(name, default_value)
 
+        if isinstance(value, (list,)):
+            value = [self.variable_registry.find(x, x) for x in value]
+        else:
+            value = self.variable_registry.find(value, value)
+
+        if repeat > 1:
+            value = [value] * repeat
+
+        return value
+    
     def _get_layer_connection(self, layer_config):
         connection_to = "previous" \
             if "connectionTo" not in layer_config \
@@ -172,3 +158,6 @@ class ModelBuilder:
 
         return layer_connection
 
+
+class MissingLayerTypeException(Exception):
+    pass

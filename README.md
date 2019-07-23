@@ -74,12 +74,23 @@ vgg16.json
 ```
 
 ### TODO
-* API Documentation
-* Model Definition Documentation
-* Model Repository
-* More complex expressions
-* Variable resolution only through expressions for better readability
-* Sample model usages
+* Core
+  * Looping
+  * Layer Groups
+    * Global Layer Group Definition
+  * Include another model
+  * Variable resolution only through expressions for better readability
+  * Decorator Layer Registration
+* Documentation
+  * API HTML Documentation
+  * Inline Documentation
+  * Model Definition Documentation
+  * Sample model usages
+* Global
+  * Model Repository
+  * HTML / JS WYSIWIG Model Builder
+  * More complex expressions
+
 * Theanos implementation
 * Pure Tensorflow implementation
 

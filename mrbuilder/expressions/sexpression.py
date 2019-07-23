@@ -1,81 +1,89 @@
 import re
-
-_EXPRESSION_START = "{{"
-_EXPRESSION_END = "}}"
-
-_MATCH_EXPRESSION = re.compile("^" + _EXPRESSION_START + ".*" + _EXPRESSION_END + "$")
+from typing import Pattern
 
 
-def eval_expression(expression, variable_resolver):
-    if _is_expression(expression):
-        return _eval_and_parse_expression(expression, variable_resolver)
-    else:
-        return variable_resolver(expression)
+class SimpleExpressionEvaluator:
+    expression_start: str
+    expression_end: str
 
+    match_expression: Pattern
 
-def _is_expression(expression):
-    return isinstance(expression, str) and \
-           re.match(_MATCH_EXPRESSION, str(expression))
+    def __init__(self, expression_start: str = "{{", expression_end: str = "}}") -> None:
+        super().__init__()
+        self.expression_start = expression_start
+        self.expression_end = expression_end
 
+        self.match_expression = re.compile("^" + self.expression_start + ".*" + self.expression_end + "$")
 
-def _eval_and_parse_expression(expression, variable_resolver):
-    expression = expression.replace(_EXPRESSION_START, "")\
-                           .replace(_EXPRESSION_END, "")
-    split_expression = expression.split()
-    if len(split_expression) == 1:
-        expression, converted = _convert(expression)
-        if not converted:
-            expression = variable_resolver(expression)
-        return expression
-    if len(split_expression) == 3:
-        left, oper, right = split_expression
-        left, converted = _convert(left)
-        if not converted:
-            left = variable_resolver(left)
+    def is_expression(self, expression) -> bool:
+        return isinstance(expression, str) and \
+               re.match(self.match_expression, str(expression))
 
-        right, converted = _convert(right)
-        if not converted:
-            right = variable_resolver(right)
+    def eval(self, expression, variable_resolver):
+        if self.is_expression(expression):
+            return self._eval_expression(
+                        self._prep_expression(expression),
+                        variable_resolver)
+        else:
+            return expression
 
-        return _eval_ternary(left, oper, right)
-    else:
-        raise ValueError("Unsupported Expression must have 1 or 3 parts separated by spaces")
+    def _prep_expression(self, expression):
+        return expression.replace(self.expression_start, "").replace(self.expression_end, "")
 
+    def _eval_expression(self, expression, variable_resolver):
+        split_expression = expression.split()
+        if len(split_expression) == 1:
+            return self._resolve_variable(expression, variable_resolver)
+        if len(split_expression) == 3:
+            left, oper, right = split_expression
+            left = self._resolve_variable(left, variable_resolver)
+            right = self._resolve_variable(right, variable_resolver)
 
-def _eval_ternary(left, middle, right):
-    if middle == "*":
-        return left * right
-    elif middle == "+":
-        return left + right
-    elif middle == "-":
-        return left - right
-    elif middle == "/":
-        return left / right
-    elif middle == "%":
-        return left % right
-    elif middle == "**":
-        return left ** right
-    else:
-        raise ValueError("Unsupported Operator: " + middle)
+            return self._eval_ternary(left, oper, right)
+        else:
+            raise ValueError("Unsupported Expression must have 1 or 3 parts separated by spaces")
 
+    def _resolve_variable(self, variable, variable_resolver):
+        converted_variable, converted = self._convert(variable)
+        if converted:
+            return converted_variable
+        else:
+            resolved_variable = variable_resolver(variable)
+            return resolved_variable if resolved_variable else variable
 
-def _convert(operand):
-    converted, successful = _convert_int(operand)
-    if not successful:
-        converted, successful = _convert_float(operand)
+    def _eval_ternary(self, left, middle, right):
+        if middle == "*":
+            return left * right
+        elif middle == "+":
+            return left + right
+        elif middle == "-":
+            return left - right
+        elif middle == "/":
+            return left / right
+        elif middle == "%":
+            return left % right
+        elif middle == "**":
+            return left ** right
+        elif middle == "||":
+            return left if left else right
+        else:
+            raise ValueError("Unsupported Operator: " + middle)
 
-    return converted, successful
+    def _convert(self, operand):
+        converted, successful = self._convert_int(operand)
+        if not successful:
+            converted, successful = self._convert_float(operand)
 
+        return converted, successful
 
-def _convert_float(operand):
-    try:
-        return float(operand), True
-    except ValueError:
-        return operand, False
+    def _convert_float(self, operand):
+        try:
+            return float(operand), True
+        except ValueError:
+            return operand, False
 
-
-def _convert_int(operand):
-    try:
-        return int(operand), True
-    except ValueError:
-        return operand, False
+    def _convert_int(self, operand):
+        try:
+            return int(operand), True
+        except ValueError:
+            return operand, False

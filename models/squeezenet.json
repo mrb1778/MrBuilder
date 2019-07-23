@@ -1,0 +1,38 @@
+{
+  "name": "squeezenet",
+  "properties": {"initialConv": 64, "initialSqueeze": 16, "dropoutRate": 0.5},
+  "templates": [
+    {"name":  "SqueezeExpand", "layers": [
+      {"type": "Conv2D", "size": "{{squeeze}}", "kernel": 1, "activation": "relu", "padding": "valid", "name": "squeeze"},
+      {"type": "Conv2D", "size": "{{squeeze * 4}}", "kernel": 1, "activation": "relu", "padding": "valid", "name": "left", "connectionTo": "squeeze"},
+      {"type": "Conv2D", "size": "{{squeeze * 4}}", "kernel": 3, "activation": "relu", "padding": "same", "name": "right", "connectionTo": "squeeze"},
+      {"type": "Concatenate", "connectionTo": ["left", "right"]}
+    ]}
+  ],
+  "layers": [
+    {"type": "Conv2D", "size": "{{initialConv}}", "kernel": 3, "strides":  2, "padding":  "valid"},
+    {"type": "Activation", "function": "relu"},
+    {"type": "MaxPooling2D", "size": 3, "strides":  2},
+
+    {"template": "SqueezeExpand", "squeeze": "{{initialSqueeze}}"},
+    {"template": "SqueezeExpand", "squeeze": "{{initialSqueeze}}"},
+    {"type": "MaxPooling2D", "size": 3, "strides":  2},
+
+    {"template": "SqueezeExpand", "squeeze": "{{initialSqueeze * 2}}"},
+    {"template": "SqueezeExpand", "squeeze": "{{initialSqueeze * 2}}"},
+    {"type": "MaxPooling2D", "size": 3, "strides":  2},
+
+    {"template": "SqueezeExpand", "squeeze": "{{initialSqueeze * 3}}"},
+    {"template": "SqueezeExpand", "squeeze": "{{initialSqueeze * 3}}"},
+
+    {"template": "SqueezeExpand", "squeeze": "{{initialSqueeze * 4}}"},
+    {"template": "SqueezeExpand", "squeeze": "{{initialSqueeze * 4}}"},
+
+    {"type": "Dropout", "rate": "{{dropoutRate}}"},
+
+    {"type": "Conv2D", "size": "{{outputSize}}", "kernel": 1, "padding":  "valid"},
+    {"type": "Activation", "function": "relu"},
+    {"type": "GlobalAveragePooling2D", "size": 3, "strides":  2},
+    {"type": "Activation", "function": "softmax"}
+  ]
+}
