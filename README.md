@@ -76,10 +76,9 @@ vgg16.json
 ### TODO
 * Core
   * Looping
-  * Layer Groups
-    * Global Layer Group Definition
+  * Global Layer Group Definition
+  * Template multi layer default params  
   * Include another model
-  * Variable resolution only through expressions for better readability
   * Decorator Layer Registration
 * Documentation
   * API HTML Documentation
@@ -87,10 +86,11 @@ vgg16.json
   * Model Definition Documentation
   * Sample model usages
 * Global
-  * Model Repository
   * HTML / JS WYSIWIG Model Builder
   * More complex expressions
 
 * Theanos implementation
 * Pure Tensorflow implementation
+* Java implementation
+* JavaScript implementation
 
