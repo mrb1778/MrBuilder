@@ -146,7 +146,6 @@ class BuilderTemplatesTest(unittest.TestCase):
         model_builder = mrbuilder.get_model(model_definition["name"])
         model = model_builder(self.input_shape)
         layers = model.layers
-        model.summary()
         self.assertEqual(len(layers),
                          6,
                          "number of layers is not correct")

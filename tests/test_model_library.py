@@ -2,8 +2,6 @@ import unittest
 
 import mrbuilder
 import mrbuilder.impl.keras_builder
-from models import create_squeeze_net
-from mrbuilder.model_builder import MissingLayerTypeException
 
 
 class BuilderTest(unittest.TestCase):
@@ -23,6 +21,7 @@ class BuilderTest(unittest.TestCase):
         model_builder = mrbuilder.get_model("vgg16")
         model = model_builder(self.input_shape, self.base_params)
         layers = model.layers
+        model.summary()
         self.assertEqual(len(layers),
                          65,
                          "number of layers is not correct")
@@ -35,9 +34,6 @@ class BuilderTest(unittest.TestCase):
                          "output shape is not correct")
 
     def test_squeezenet(self):
-        model_ref = create_squeeze_net(self.input_shape, self.base_params["outputSize"])
-        model_ref.summary()
-
         model_builder = mrbuilder.get_model("squeezenet")
         params = {
             **self.base_params,
@@ -45,7 +41,6 @@ class BuilderTest(unittest.TestCase):
             "initialSqueeze": 16
         }
         model = model_builder(self.input_shape, params)
-        model.summary()
         layers = model.layers
         self.assertEqual(layers[1].output.shape[-1],
                          params["initialConv"],

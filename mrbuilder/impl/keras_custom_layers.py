@@ -18,8 +18,7 @@ def conv_act_bn(
         kernel_regularizer=None,
         l2_weight_decay=None,
         momentum=0.99,
-        do_dropout=False,
-        dropout_rate=0.4,
+        dropout_rate=0.0,
         dilation_rate=(1, 1),
         do_batch_norm=True):
 
@@ -58,7 +57,7 @@ def conv_act_bn(
     if do_batch_norm:
         x = BatchNormalization(momentum=momentum)(x)
 
-    if do_dropout:
+    if dropout_rate > 0:
         x = Dropout(dropout_rate)(x)
 
     return x
@@ -76,8 +75,7 @@ mrbuilder.register_layer_builder(
                 activation_alpha=config("activationAlpha", 0.3),
                 padding=config("padding", "same"),
                 momentum=config("momentum", 0.99),
-                do_dropout=config("doDropout", False),
-                dropout_rate=config("dropoutRate", 0.4),
+                dropout_rate=config("dropoutRate", 0.0),
                 do_batch_norm=config("doBatchNorm", True),
                 sep_conv=config("sepConv", False),
                 conv_transpose=config("convTranspose", False),

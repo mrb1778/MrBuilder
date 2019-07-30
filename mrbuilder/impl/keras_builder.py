@@ -119,3 +119,7 @@ class KerasBuilderConfig(BuilderConfig, metaclass=Singleton):
 
 set_builder_config(KerasBuilderConfig(), True)
 
+
+def set_keras_as_builder():
+    set_builder_config(KerasBuilderConfig())
+
