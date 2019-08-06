@@ -66,6 +66,22 @@ class SimpleExpressionEvaluator:
             return left ** right
         elif middle == "||":
             return left if left else right
+        elif middle == "and" or middle == "&&":
+            return left and right
+        elif middle == "or" or middle == "||":
+            return left or right
+        elif middle == ">":
+            return left > right
+        elif middle == ">=":
+            return left >= right
+        elif middle == "<":
+            return left < right
+        elif middle == "<":
+            return left <= right
+        elif middle == "==" or middle == "=":
+            return left == right
+        elif middle == "!=" or middle == "<>":
+            return left != right
         else:
             raise ValueError("Unsupported Operator: " + middle)
 
@@ -73,6 +89,8 @@ class SimpleExpressionEvaluator:
         converted, successful = self._convert_int(operand)
         if not successful:
             converted, successful = self._convert_float(operand)
+        if not successful:
+            converted, successful = self._convert_bool(operand)
 
         return converted, successful
 
@@ -86,4 +104,12 @@ class SimpleExpressionEvaluator:
         try:
             return int(operand), True
         except ValueError:
+            return operand, False
+
+    def _convert_bool(self, operand):
+        if operand in [True, 'True', 'true', 't', 'y', 'yes']:
+            return True, True
+        elif operand in [False, 'False', 'false', 'f', 'n', 'no']:
+            return False, True
+        else:
             return operand, False

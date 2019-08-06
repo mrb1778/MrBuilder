@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.8.0] - 2019-08-05
+### Added
+- Added "If" Statements in builder
+- Added boolean logic to expressions, and, or, >, <, ==, !=, added boolean conversion support  
+- Updated Readme to reflect new Vgg16
+### Removed
+- Support for "--ignore" logic in layers
+
 ## [0.7.3] - 2019-07-23
 ### Changed
 - Fixed expression recursion bug with name collisions

@@ -101,7 +101,7 @@ class ModelBuilder:
             self.variable_registry.push_context(layer_config)
             self.variable_registry.push_value("template", False)
 
-            if not self.variable_registry.find("--ignore"):
+            if self.variable_registry.find("if") is None or self.variable_registry.find("if"):
                 layers = self.variable_registry.find("layers")
                 if layers:
                     self.variable_registry.push_value("layers", False)

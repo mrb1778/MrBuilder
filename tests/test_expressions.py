@@ -51,6 +51,22 @@ class ExpressionsTest(unittest.TestCase):
         self.assertEqual(self.expression_evaluator.eval("{{0 || var2}}", self.variable_resolver),
                          self.variables["var2"])
 
+    def test_variable_equivalence(self):
+        self.assertTrue(self.expression_evaluator.eval("{{2 > 1}}", self.variable_resolver))
+        self.assertTrue(self.expression_evaluator.eval("{{var2 > var1}}", self.variable_resolver))
+
+        self.assertTrue(self.expression_evaluator.eval("{{5 < 10}}", self.variable_resolver))
+        self.assertTrue(self.expression_evaluator.eval("{{var1 < var2}}", self.variable_resolver))
+
+        self.assertTrue(self.expression_evaluator.eval("{{2 == 2}}", self.variable_resolver))
+        self.assertTrue(self.expression_evaluator.eval("{{var1 == var1}}", self.variable_resolver))
+
+        self.assertTrue(self.expression_evaluator.eval("{{1 != 2}}", self.variable_resolver))
+        self.assertTrue(self.expression_evaluator.eval("{{var1 != var2}}", self.variable_resolver))
+
+        self.assertTrue(self.expression_evaluator.eval("{{true == true}}", self.variable_resolver))
+        self.assertTrue(self.expression_evaluator.eval("{{true != false}}", self.variable_resolver))
+
 
 if __name__ == '__main__':
     unittest.main()

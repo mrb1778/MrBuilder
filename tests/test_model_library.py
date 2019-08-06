@@ -21,7 +21,6 @@ class BuilderTest(unittest.TestCase):
         model_builder = mrbuilder.get_model("vgg16")
         model = model_builder(self.input_shape, self.base_params)
         layers = model.layers
-        model.summary()
         self.assertEqual(len(layers),
                          65,
                          "number of layers is not correct")
