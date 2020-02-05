@@ -2,12 +2,11 @@
 Model and Repository Builder for Deep Learning with an emphasis on Keras / Tensorflow
 
 ```python
-import mrbuilder
-import mrbuilder.impl.keras_builder  # used to initialize Keras builder
+import mrbuilder_keras as mrb  # used to initialize Keras builder
 
-mrbuilder.load_models_from_path("/path/to/models")
+mrb.load("/path/to/models")
 
-model_builder = mrbuilder.get_model("vgg16")
+model_builder = mrb.get_model("vgg16")
 
 
 input_shape = [32, 32, 3]
@@ -69,7 +68,7 @@ vgg16.json
   * Looping
   * Global Layer Group Definition
   * Template multi layer default params  
-  * Include another model
+  * Model as first class layer
   * Decorator Layer Registration
 * Documentation
   * API HTML Documentation
@@ -77,11 +76,10 @@ vgg16.json
   * Model Definition Documentation
   * Sample model usages
 * Global
-  * HTML / JS WYSIWIG Model Builder
-  * More complex expressions
+  * Web Based WYSIWIG Model Builder
+  * Expand expression syntax
 
-* Theanos implementation
-* Pure Tensorflow implementation
-* Java implementation
+* PyTorch implementation
 * JavaScript implementation
+* Java implementation
 
