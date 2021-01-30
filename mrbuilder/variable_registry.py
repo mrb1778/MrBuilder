@@ -1,18 +1,18 @@
 from collections import deque
 from typing import Dict, Any
 
-# from mrbuilder.builder_registry import BuilderRegistry
+from mrbuilder.expressions.expression_evaluator import ExpressionEvaluator
 
 
 class VariableRegistry:
     contexts: deque
     scope_index: int
-    # builder_registry: BuilderRegistry
+    expression_evaluator: ExpressionEvaluator
 
-    def __init__(self, builder_registry, initial_context: Dict = None) -> None:
+    def __init__(self, expression_evaluator, initial_context: Dict = None) -> None:
         super().__init__()
 
-        self.builder_registry = builder_registry
+        self.expression_evaluator = expression_evaluator
 
         self.contexts = deque()
         self.scope_index = -1
@@ -37,7 +37,7 @@ class VariableRegistry:
         return len(self.contexts)
 
     def pop_context_to_depth(self, depth: int):
-        while self.get_context_depth() < depth:
+        while self.get_context_depth() > depth:
             self.pop_context()
 
     def find(self, name, default_value=None, limit_to_scope=True, start_at_depth=0):
@@ -45,8 +45,8 @@ class VariableRegistry:
         if value is None:
             value = default_value
 
-        if self.builder_registry.expression_evaluator.is_expression(value):
-            return self.builder_registry.expression_evaluator.eval(
+        if self.expression_evaluator.is_expression(value):
+            return self.expression_evaluator.eval(
                 value,
                 lambda get_name: self.get(get_name, context_depth + 1))
         else:

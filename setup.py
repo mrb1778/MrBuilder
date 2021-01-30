@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mrbuilder",
-    version="0.0.1",
+    version="0.9.5",
     author="Michael R. Bernstein",
     author_email="code@michaelrbernstein.com",
     description="Model and Repository Builder for Deep Learning",

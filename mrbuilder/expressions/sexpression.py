@@ -1,8 +1,10 @@
 import re
 from typing import Pattern
 
+from mrbuilder.expressions.expression_evaluator import ExpressionEvaluator
 
-class SimpleExpressionEvaluator:
+
+class SimpleExpressionEvaluator(ExpressionEvaluator):
     expression_start: str
     expression_end: str
 
@@ -94,19 +96,22 @@ class SimpleExpressionEvaluator:
 
         return converted, successful
 
-    def _convert_float(self, operand):
+    @staticmethod
+    def _convert_float(operand):
         try:
             return float(operand), True
         except ValueError:
             return operand, False
 
-    def _convert_int(self, operand):
+    @staticmethod
+    def _convert_int(operand):
         try:
             return int(operand), True
         except ValueError:
             return operand, False
 
-    def _convert_bool(self, operand):
+    @staticmethod
+    def _convert_bool(operand):
         if operand in [True, 'True', 'true', 't', 'y', 'yes']:
             return True, True
         elif operand in [False, 'False', 'false', 'f', 'n', 'no']:

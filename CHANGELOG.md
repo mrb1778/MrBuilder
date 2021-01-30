@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.5] - 2021-01-29
+### Changed 
+- Move internal code around
+- Add Decorator for layer registration
+- Add AliasedDict for that allows layers to have multiple names
+- Add layer signature inspection
+- Redo expression execution
+- Fix variable find issues
+
 
 ## [0.9.0] - 2020-02-04
 ### Changed
@@ -70,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.2] - 2014-08-09
 ### Changed
-- Documentation to reflect new built in layer utils.
+- Documentation to reflect new built in layer xutils.
 
 ## [0.5.1] - 2019-01-26
 ### Added
