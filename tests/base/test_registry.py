@@ -1,14 +1,9 @@
-import unittest
-
+from base.test_bootstrap import TestBuilderBase
 from mrbuilder.builder_registry import MissingModelException
 
 
 class TestBuilderRegistry:
-    class Base(unittest.TestCase):
-        @classmethod
-        def get_builder(cls):
-            return None
-
+    class Base(TestBuilderBase.Base):
         @classmethod
         def setUpClass(cls) -> None:
             super().setUpClass()

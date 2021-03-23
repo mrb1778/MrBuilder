@@ -1,6 +1,7 @@
 import unittest
 
 from mrbuilder.expressions.sexpression import SimpleExpressionEvaluator
+from mrbuilder.utils import camel_to_snake
 
 
 class ExpressionsTest(unittest.TestCase):
@@ -12,7 +13,7 @@ class ExpressionsTest(unittest.TestCase):
             "var1": 1,
             "var2": 2
         }
-        # todo: expose variable resolver for testing
+        # todo: add testing for actual variable resolver
         self.variable_resolver = lambda name: self.variables[name] if name in self.variables else name
 
     def test_non_expression(self):
@@ -66,6 +67,12 @@ class ExpressionsTest(unittest.TestCase):
 
         self.assertTrue(self.expression_evaluator.eval("{{true == true}}", self.variable_resolver))
         self.assertTrue(self.expression_evaluator.eval("{{true != false}}", self.variable_resolver))
+
+    def test_camel_to_snake(self):
+        self.assertEqual('snake_case_var', camel_to_snake('snakeCaseVar'))
+        self.assertEqual('snake_case_var', camel_to_snake('SnakeCaseVar'))
+        self.assertEqual('snake_case_var_xyz', camel_to_snake('SnakeCaseVarXYZ'))
+        self.assertEqual('snake_case_var_xyz12', camel_to_snake('SnakeCaseVarXYZ12'))
 
 
 if __name__ == '__main__':

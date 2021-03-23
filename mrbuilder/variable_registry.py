@@ -66,7 +66,7 @@ class VariableRegistry:
     def get(self, name, start_at_depth=0):
         value = self.find(name, limit_to_scope=False, start_at_depth=start_at_depth)
         if value is None:
-            raise VariableNotFoundException("Not Found{}".format(name))
+            raise VariableNotFoundException(F"Variable Not Found: '{name}'")
         return value
 
 
