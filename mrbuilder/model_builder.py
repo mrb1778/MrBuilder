@@ -1,53 +1,20 @@
 from typing import Callable, Dict
 
 from mrbuilder.variable_registry import VariableRegistry
-# from mrbuilder.builder_registry import BuilderRegistry
 
 
-class ModelBuilder:
-    # builder_registry: BuilderRegistry
-
-    layers: list
-    layers_by_name: Dict
-    properties: Dict
-    variable_registry: VariableRegistry
-
-    def __init__(self, builder_registry, model_config: Dict, name=None) -> None:
+class ModelBuilderInstance:
+    def __init__(self, builder_registry, model_config, variable_registry) -> None:
         super().__init__()
         self.builder_registry = builder_registry
         self.model_config = model_config
 
-        model_properties = self.model_config.get("properties")
-        self.variable_registry = VariableRegistry(self.builder_registry.expression_evaluator, model_properties)
+        self.variable_registry = variable_registry
         self.layers = []
         self.layers_by_name = {}
         self.layer_templates = {}
-        self.name = name
 
-    def build(self) -> Callable:
-        def _create_model(input_shape, override_properties=None, output_size=None):
-            self.variable_registry.push_context(override_properties)
-            self.variable_registry.push_value('outputSize', output_size)
-
-            input_layers = self._create_inputs(input_shape)
-
-            layer_templates_arr = self.model_config["templates"] if "templates" in self.model_config else []
-            self.layer_templates = {item["name"]: item for item in layer_templates_arr}
-
-            self._create_layers(self.model_config["layers"])
-
-            model_creator = self.builder_registry.get_model_creator()
-
-            return model_creator(
-                inputs=input_layers,
-                layers=self.layers,
-                layers_by_name=self.layers_by_name,
-                output_config=self.model_config["output"] if "output" in self.model_config else {},
-                name=self.name)
-
-        return _create_model
-
-    def _create_inputs(self, input_shape):
+    def create_inputs(self, input_shape):
         input_config = self.model_config.get("inputs")
         num_inputs = 1
         input_join_type = None
@@ -88,7 +55,7 @@ class ModelBuilder:
         if name is not None:
             self.layers_by_name[name] = layer
 
-    def _create_layers(self, layers_config, layers_options=None):
+    def create_layers(self, layers_config, layers_options=None):
         for index, layer_config in enumerate(layers_config):
             context_depth_initial = self.variable_registry.get_context_depth()
 
@@ -104,7 +71,7 @@ class ModelBuilder:
                 layers = self.variable_registry.find("layers")
                 if layers:
                     self.variable_registry.push_value("layers", False)
-                    self._create_layers(layers, layer_config)
+                    self.create_layers(layers, layer_config)
                 else:
                     layer = self._create_layer(layer_config)
                     self._add_layer(layer, self.variable_registry.find("name"))
@@ -119,7 +86,7 @@ class ModelBuilder:
         layer_builder = self.builder_registry.get_layer_builder(layer_type)
         layer = layer_builder(self._get_variable_from_registry, layer_connection)
         return layer
-    
+
     def _get_variable_from_registry(self, name, default_value=None, repeat=0):
         if self.builder_registry.has_layer_attribute_builder(name):
             return self.builder_registry.get_layer_attribute_builder(name)(
@@ -140,7 +107,7 @@ class ModelBuilder:
             value = [value] * repeat
 
         return value
-    
+
     def _get_layer_connection(self, layer_config):
         connection_to = "previous" \
             if "connectionTo" not in layer_config \
@@ -152,6 +119,53 @@ class ModelBuilder:
             layer_connection = self.layers_by_name[connection_to]
 
         return layer_connection
+
+
+class ModelBuilder:
+    # builder_registry: BuilderRegistry
+
+    layers: list
+    layers_by_name: Dict
+    properties: Dict
+    variable_registry: VariableRegistry
+
+    def __init__(self, builder_registry, model_config: Dict, name=None) -> None:
+        super().__init__()
+        self.builder_registry = builder_registry
+        self.model_config = model_config
+
+        self.model_properties = self.model_config.get("properties")
+        self.name = name
+
+    def build(self) -> Callable:
+        def _create_model(input_shape, override_properties=None, output_size=None):
+            variable_registry = VariableRegistry(self.builder_registry.expression_evaluator,
+                                                 self.model_properties)
+            variable_registry.push_context(override_properties)
+            variable_registry.push_value('outputSize', output_size)
+
+            # todo: move to 1 call
+            model_builder_instance = ModelBuilderInstance(self.builder_registry,
+                                                          self.model_config,
+                                                          variable_registry)
+
+            input_layers = model_builder_instance.create_inputs(input_shape)
+
+            layer_templates_arr = model_builder_instance.model_config["templates"] if "templates" in self.model_config else []
+            model_builder_instance.layer_templates = {item["name"]: item for item in layer_templates_arr}
+
+            model_builder_instance.create_layers(model_builder_instance.model_config["layers"])
+
+            model_creator = self.builder_registry.get_model_creator()
+
+            return model_creator(
+                inputs=input_layers,
+                layers=model_builder_instance.layers,
+                layers_by_name=model_builder_instance.layers_by_name,
+                output_config=self.model_config["output"] if "output" in self.model_config else {},
+                name=self.name)
+
+        return _create_model
 
 
 class MissingLayerTypeException(Exception):

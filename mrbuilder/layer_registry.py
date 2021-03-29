@@ -4,7 +4,7 @@ import functools
 
 
 def register_layer_wrapper(registry, name: str, *aliases):
-    def decorator_register_layer(func: Callable):
+    def decorator_register_layer(func):
         registry[name.lower()] = func
         for alias in aliases:
             registry[alias.lower()] = func
