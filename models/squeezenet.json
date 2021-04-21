@@ -3,9 +3,9 @@
   "properties": {"initialConv": 64, "initialSqueeze": 16, "dropoutRate": 0.5},
   "templates": [
     {"name":  "SqueezeExpand", "layers": [
-      {"type": "Conv2D", "size": "{{squeeze}}", "kernel": 1, "activation": "relu", "padding": "valid", "name": "squeeze"},
-      {"type": "Conv2D", "size": "{{squeeze * 4}}", "kernel": 1, "activation": "relu", "padding": "valid", "name": "left", "connectionTo": "squeeze"},
-      {"type": "Conv2D", "size": "{{squeeze * 4}}", "kernel": 3, "activation": "relu", "padding": "same", "name": "right", "connectionTo": "squeeze"},
+      {"type": "Conv2D", "size": "{{squeeze}}", "kernel": 1, "activation": "relu", "padding": "valid", "name": "squeezed"},
+      {"type": "Conv2D", "size": "{{squeeze * 4}}", "kernel": 1, "activation": "relu", "padding": "valid", "name": "left", "connectionTo": "squeezed"},
+      {"type": "Conv2D", "size": "{{squeeze * 4}}", "kernel": 3, "activation": "relu", "padding": "same", "name": "right", "connectionTo": "squeezed"},
       {"type": "Concatenate", "connectionTo": ["left", "right"]}
     ]}
   ],

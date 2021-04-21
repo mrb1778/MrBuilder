@@ -36,7 +36,6 @@ class TestModelLibrary:
                 "initialSqueeze": 16
             }
             model = model_builder(self.input_shape, params)
-            layers = model.layers
             self.assertEqual(self.get_out_size(model, 1)[-1],
                              params["initialConv"],
                              "output shape is not correct")

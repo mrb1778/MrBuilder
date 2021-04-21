@@ -100,7 +100,7 @@ class ModelBuilderInstance:
 
         if isinstance(value, (list,)):
             value = [self.variable_registry.find(x, x) for x in value]
-        else:
+        else:  # todo: dont recurse unless is macro --> unwrap macros to macros
             value = self.variable_registry.find(value, value)
 
         if repeat > 1:
@@ -138,11 +138,16 @@ class ModelBuilder:
         self.name = name
 
     def build(self) -> Callable:
-        def _create_model(input_shape, override_properties=None, output_size=None):
+        def _create_model(input_shape, model_args=None, **kwargs):
             variable_registry = VariableRegistry(self.builder_registry.expression_evaluator,
                                                  self.model_properties)
-            variable_registry.push_context(override_properties)
-            variable_registry.push_value('outputSize', output_size)
+
+            model_args_merged = {**model_args, **kwargs} if model_args is not None else model_args
+            if model_args is not None and kwargs is not None:
+                # todo: snake case to camel
+                variable_registry.push_context(model_args_merged)
+                if "output_size" in model_args_merged:
+                    variable_registry.push_value('outputSize', model_args_merged["output_size"])
 
             # todo: move to 1 call
             model_builder_instance = ModelBuilderInstance(self.builder_registry,
