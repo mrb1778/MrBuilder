@@ -142,7 +142,7 @@ class ModelBuilder:
             variable_registry = VariableRegistry(self.builder_registry.expression_evaluator,
                                                  self.model_properties)
 
-            model_args_merged = {**model_args, **kwargs} if model_args is not None else model_args
+            model_args_merged = {**model_args, **kwargs} if kwargs is not None else model_args
             if model_args is not None and kwargs is not None:
                 # todo: snake case to camel
                 variable_registry.push_context(model_args_merged)
