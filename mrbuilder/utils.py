@@ -38,6 +38,11 @@ _camel_snake_regex_name_letters = re.compile('(.)([A-Z][a-z]+)')
 _camel_snake_regex_name_numbers = re.compile('([a-z0-9])([A-Z])')
 
 
-def camel_to_snake(name):
-    name = re.sub(_camel_snake_regex_name_letters, r'\1_\2', name)
-    return re.sub(_camel_snake_regex_name_numbers, r'\1_\2', name).lower()
+def camel_to_snake(camel_str):
+    camel_str = re.sub(_camel_snake_regex_name_letters, r'\1_\2', camel_str)
+    return re.sub(_camel_snake_regex_name_numbers, r'\1_\2', camel_str).lower()
+
+
+def snake_to_camel(snake_str):
+    components = snake_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])

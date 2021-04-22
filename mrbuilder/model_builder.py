@@ -1,5 +1,6 @@
 from typing import Callable, Dict
 
+from mrbuilder.utils import camel_to_snake, snake_to_camel
 from mrbuilder.variable_registry import VariableRegistry
 
 
@@ -142,12 +143,17 @@ class ModelBuilder:
             variable_registry = VariableRegistry(self.builder_registry.expression_evaluator,
                                                  self.model_properties)
 
-            model_args_merged = {**model_args, **kwargs} if kwargs is not None else model_args
-            if model_args is not None and kwargs is not None:
-                # todo: snake case to camel
+            if model_args is None:
+                model_args = {}
+            model_args.update(kwargs)
+            if len(model_args):
+                # todo: move snake / camel logic to variable_registry retrieval to make global
+                model_args_merged = {**model_args}
+                for key, value in model_args.items():
+                    model_args_merged[camel_to_snake(key)] = value
+                    model_args_merged[snake_to_camel(key)] = value
+
                 variable_registry.push_context(model_args_merged)
-                if "output_size" in model_args_merged:
-                    variable_registry.push_value('outputSize', model_args_merged["output_size"])
 
             # todo: move to 1 call
             model_builder_instance = ModelBuilderInstance(self.builder_registry,
