@@ -61,7 +61,7 @@ class TestBuilder:
             }
     
         def test_model_build_basic(self):
-            model_builder = self.get_builder().get_model("vgg16")
+            model_builder = self.get_builder().get("vgg16")
             model = model_builder(self.input_shape, self.base_params)
             
             self.assertEqual(self.get_num_layers(model),
@@ -91,7 +91,7 @@ class TestBuilder:
                 ]
             }
             self.get_builder().build(model_definition)
-            model_builder = self.get_builder().get_model(model_definition["name"])
+            model_builder = self.get_builder().get(model_definition["name"])
             conv_size = 64
             model = model_builder(self.input_shape, {
                 **self.base_params,
@@ -118,17 +118,17 @@ class TestBuilder:
             }
             with self.assertRaises(MissingLayerTypeException, msg="Layer type was missing, but not caught"):
                 self.get_builder().build(model_definition_fail)
-                model_builder = self.get_builder().get_model(model_definition_fail["name"])
+                model_builder = self.get_builder().get(model_definition_fail["name"])
                 model_builder(self.input_shape, self.base_params)
 
         def test_model_build_multiple(self):
-            model_builder1 = self.get_builder().get_model("vgg16")
+            model_builder1 = self.get_builder().get("vgg16")
             model1 = model_builder1(self.input_shape, self.base_params)
             model2 = model_builder1(self.input_shape, self.base_params)
             self.assertEqual(self.get_num_layers(model1), self.get_num_layers(model2),
                              msg="Length of layers do not equal")
 
-            model_builder2 = self.get_builder().get_model("vgg16")
+            model_builder2 = self.get_builder().get("vgg16")
             model2_1 = model_builder2(self.input_shape, self.base_params)
             self.assertEqual(self.get_num_layers(model1), self.get_num_layers(model2_1),
                              msg="Length of layers do not equal")

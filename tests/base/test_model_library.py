@@ -15,7 +15,7 @@ class TestModelLibrary:
             }
 
         def test_vgg16(self):
-            model_builder = self.get_builder().get_model("vgg16")
+            model_builder = self.get_builder().get("vgg16")
             model = model_builder(self.input_shape, self.base_params)
             self.assertEqual(self.get_num_layers(model),
                              65,
@@ -29,7 +29,7 @@ class TestModelLibrary:
                              "output shape is not correct")
 
         def test_squeezenet(self):
-            model_builder = self.get_builder().get_model("squeezenet")
+            model_builder = self.get_builder().get("squeezenet")
             params = {
                 **self.base_params,
                 "initialConv": 64,

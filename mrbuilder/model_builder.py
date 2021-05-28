@@ -96,6 +96,14 @@ class ModelBuilderInstance:
         else:
             return self._get_raw_variable_from_registry(name, default_value, repeat)
 
+    def _get_specific_variable_from_registry(self, name, default_value=None, repeat=0):
+        if self.builder_registry.has_layer_attribute_builder(name):
+            return self.builder_registry.get_layer_attribute_builder(name)(
+                self._get_raw_variable_from_registry,
+                default_value)
+        else:
+            return self._get_raw_variable_from_registry(name, default_value, repeat)
+
     def _get_raw_variable_from_registry(self, name, default_value=None, repeat=0):
         value = self.variable_registry.find(name, default_value)
 

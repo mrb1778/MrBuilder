@@ -5,6 +5,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.0.0] - 2021-05-27
+### Changed
+- Updated Metadata in setup.py
+- Merged Implementations MrBuilder-PyTorch and MrBuilder-Keras into MrBuilder repository
+- Keras Changelog
+  
+        ## [0.2.0] - 2021-01-29
+        ### Changed
+        - Move to functional layer registration to confirm with pytorch implementation
+        
+        
+        ## [0.1.0] - 2020-02-04
+        ### Added
+        - Initial Version extracted from Core Implementation
+        - Moved Test cases to implementation
+        - Simplified library files
+        - Extracted out implementation to separate files
+- Pytorch Changelog
+  
+        ## [0.5.1] - 2021-05-03
+        ### Changed
+        - Move test utils to test utils folder
+        
+        ## [0.5] - 2021-04-20
+        ### Added
+        - Add ability to nest layers
+        - Add forward dynamic params
+        - Custom hardcoded templates
+        ### Changed
+        - Use links for input, add multi input ability
+        - Updates for testing
+        - Use smart naming convention for layers
+        - Use links for output size
+        - Use inline weight initiation
+        - Add dynamic scanning of Pytorch Modules
+        - Use MrBuilder global Tests
+        ### Fixed
+        - Hardcode Test VGG16 - 2021-04-21
+        
+        ## [0.0.5] - 2021-01-29
+        ### Added
+        - Initial Version
+
 ## [0.9.9] - 2021-04-21
 ### Added
 - Add basic model args camel snake 

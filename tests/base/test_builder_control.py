@@ -27,7 +27,7 @@ class TestBuilderControl:
                 ]
             }
             self.get_builder().build(model_definition)
-            model_builder = self.get_builder().get_model(model_definition["name"])
+            model_builder = self.get_builder().get(model_definition["name"])
             model = model_builder(self.input_shape)
 
             self.assertEqual(4,
@@ -56,7 +56,7 @@ class TestBuilderControl:
                 ]
             }
             self.get_builder().build(model_definition)
-            model_builder = self.get_builder().get_model(model_definition["name"])
+            model_builder = self.get_builder().get(model_definition["name"])
             model = model_builder(self.input_shape)
             layers = model.layers
 
@@ -88,7 +88,7 @@ class TestBuilderControl:
                 ]
             }
             self.get_builder().build(model_definition)
-            model_builder = self.get_builder().get_model(model_definition["name"])
+            model_builder = self.get_builder().get(model_definition["name"])
             model = model_builder(self.input_shape)
             
             self.assertEqual(4,
@@ -117,7 +117,7 @@ class TestBuilderControl:
         #         ]
         #     }
         #     self.get_builder().build(model_definition)
-        #     model_builder = self.get_builder().get_model(model_definition["name"])
+        #     model_builder = self.get_builder().get(model_definition["name"])
         #     model = model_builder(self.input_shape)
         #     layers = model.layers
         #

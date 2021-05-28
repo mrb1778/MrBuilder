@@ -13,7 +13,7 @@ class BuilderRegistry:
 
     expression_evaluator: SimpleExpressionEvaluator
 
-    models: Dict[str, Callable]
+    model_builders: Dict[str, Callable]
 
     def __init__(self, layers_builders=None, layer_attribute_builders=None) -> None:
         super().__init__()
@@ -22,7 +22,7 @@ class BuilderRegistry:
 
         self.expression_evaluator = SimpleExpressionEvaluator()
 
-        self.models = {}
+        self.model_builders = {}
 
     def get_model_creator(self) -> Callable:
         pass
@@ -71,21 +71,22 @@ class BuilderRegistry:
         model_name = name if name is not None else model_config["name"]
         model_builder = ModelBuilder(self, model_config, name=model_name).build()
         if register:
-            self.register_model(model_name, model_builder)
+            self.register_model_builder(model_name, model_builder)
 
         return model_builder
 
-    def register_model(self, name: str, model_builder: Callable) -> None:
-        self.models[name] = model_builder
+    def register_model_builder(self, name: str, model_builder: Callable) -> None:
+        self.model_builders[name] = model_builder
 
-    def get_model(self, name: str) -> Callable:
-        if name in self.models:
-            return self.models[name]
+    def get_model_builder(self, name: str) -> Callable:
+        if name in self.model_builders:
+            return self.model_builders[name]
         else:
-            raise MissingModelException("Model not found {} in models: {}".format(name, [*self.models.keys()]))
+            raise MissingModelBuilderException(
+                "Model Builder not found {} in model builders: {}".format(name, [*self.model_builders.keys()]))
 
-    def is_model_registered(self, name: str) -> bool:
-        return name in self.models
+    def is_model_builder_registered(self, name: str) -> bool:
+        return name in self.model_builders
 
     # loading  (moved from model_loader)
     def load(self, path: str = None) -> None:
@@ -103,11 +104,11 @@ class BuilderRegistry:
             parsed_path = json.load(file)
 
         if isinstance(parsed_path, list):
-            for parsed_model in parsed_path:
-                self.build(parsed_model)
+            for parsed_model_builder in parsed_path:
+                self.build(parsed_model_builder)
         else:
             self.build(parsed_path)
 
 
-class MissingModelException(Exception):
+class MissingModelBuilderException(Exception):
     pass

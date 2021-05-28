@@ -1,5 +1,5 @@
 from base.test_bootstrap import TestBuilderBase
-from mrbuilder.builder_registry import MissingModelException
+from mrbuilder.builder_registry import MissingModelBuilderException
 
 
 class TestBuilderRegistry:
@@ -29,14 +29,14 @@ class TestBuilderRegistry:
             cls.get_builder().build(cls.model_definition, cls.model_definition_name_custom)
 
         def test_model_retrieval(self):
-            self.assertIsNotNone(self.get_builder().get_model(self.model_definition_name),
+            self.assertIsNotNone(self.get_builder().get(self.model_definition_name),
                                  "model not found")
 
         def test_model_retrieval_custom_name(self):
-            self.assertIsNotNone(self.get_builder().get_model(self.model_definition_name_custom),
+            self.assertIsNotNone(self.get_builder().get(self.model_definition_name_custom),
                                  "can not retrieve model with custom name")
 
         def test_model_retrieval_missing(self):
-            with self.assertRaises(MissingModelException,
-                                   msg="MissingModelException not thrown when trying to find a non existent model "):
-                self.get_builder().get_model(self.model_definition_name + "_INVALID")
+            with self.assertRaises(MissingModelBuilderException,
+                                   msg="MissingModelBuilderException not thrown when trying to find a non existent model "):
+                self.get_builder().get(self.model_definition_name + "_INVALID")

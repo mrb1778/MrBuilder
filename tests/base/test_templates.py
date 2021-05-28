@@ -29,7 +29,7 @@ class TestBuilderTemplates:
                 ]
             }
             self.get_builder().build(model_definition)
-            model_builder = self.get_builder().get_model(model_definition["name"])
+            model_builder = self.get_builder().get(model_definition["name"])
             model = model_builder(self.input_shape)
             
             self.assertEqual(self.get_stride(model, 1),
@@ -57,7 +57,7 @@ class TestBuilderTemplates:
             }
             with self.assertRaises(MissingLayerTypeException, msg="Layer type was missing, but not caught"):
                 self.get_builder().build(model_definition_fail)
-                model_builder = self.get_builder().get_model(model_definition_fail["name"])
+                model_builder = self.get_builder().get(model_definition_fail["name"])
                 model_builder(self.input_shape, self.base_params)
     
         def test_template_var_missing(self):
@@ -77,7 +77,7 @@ class TestBuilderTemplates:
             }
             with self.assertRaises(VariableNotFoundException, msg="Variable was missing, but not caught"):
                 self.get_builder().build(model_definition_fail)
-                model_builder = self.get_builder().get_model(model_definition_fail["name"])
+                model_builder = self.get_builder().get(model_definition_fail["name"])
                 model_builder(self.input_shape, self.base_params)
     
         def test_model_build_template_multi_layers_simple(self):
@@ -97,7 +97,7 @@ class TestBuilderTemplates:
                 ]
             }
             self.get_builder().build(model_definition)
-            model_builder = self.get_builder().get_model(model_definition["name"])
+            model_builder = self.get_builder().get(model_definition["name"])
             model = model_builder(self.input_shape)
                 
             self.assertEqual(self.get_num_layers(model),
@@ -141,7 +141,7 @@ class TestBuilderTemplates:
                 ]
             }
             self.get_builder().build(model_definition)
-            model_builder = self.get_builder().get_model(model_definition["name"])
+            model_builder = self.get_builder().get(model_definition["name"])
             model = model_builder(self.input_shape)
             self.assertEqual(self.get_num_layers(model),
                              6,
