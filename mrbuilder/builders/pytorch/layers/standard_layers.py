@@ -2,8 +2,8 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mrbuilder_pytorch.builder_models import PyTorchBuilderLayer
-from mrbuilder_pytorch.layer_registry import register_layer
+from ..builder_models import PyTorchBuilderLayer
+from ..layer_registry import register_layer
 import mrbuilder.utils as mrbu
 
 
@@ -24,6 +24,7 @@ class Conv2dBuilderLayer(PyTorchBuilderLayer):
                    kernel=3,
                    dilation=1,
                    strides=1,
+                   groups=1,
                    padding=None,
                    bias=True):
         self.out_size = size
@@ -45,6 +46,7 @@ class Conv2dBuilderLayer(PyTorchBuilderLayer):
                          out_channels=size,
                          kernel_size=kernel,
                          stride=strides,
+                         groups=groups,
                          dilation=dilation,
                          bias=bias,
                          **args)
@@ -136,7 +138,8 @@ class FlattenBuilderLayer(PyTorchBuilderLayer):
     def get_output_size(self):
         result = 1
         for dim in self.previous_size:
-            result = result * dim
+            if dim != 0:
+                result = result * dim
 
         return [result]
 

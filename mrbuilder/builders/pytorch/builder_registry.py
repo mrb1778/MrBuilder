@@ -1,7 +1,7 @@
 from typing import Callable
 
 from mrbuilder.builder_registry import BuilderRegistry
-from mrbuilder_pytorch.builder_models import PyTorchBuilderLayerInput, PyTorchBuilderModel
+from .builder_models import PyTorchBuilderLayerInput, PyTorchBuilderModel
 
 
 class PyTorchBuilderRegistry(BuilderRegistry):

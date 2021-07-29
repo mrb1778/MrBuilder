@@ -5,7 +5,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from mrbuilder.utils import get_params, remove_keys, is_single
-from mrbuilder_pytorch import utils as pu
+import mrbuilder.builders.pytorch.utils as pu
 
 
 class PyTorchBuilderLayer:
@@ -55,15 +55,16 @@ class PyTorchBuilderLayer:
             name: config(name, default_value) for name, default_value in default_config_get_output_size.items()
         }
 
-    def run_initialization(self):
+    def run_initialization(self, **kwargs):
         if self.connection is not None:
             if is_single(self.connection):
                 self.previous_size = self.connection.get_output_size()
             else:
                 return [con.get_output_size() for con in self.connection]
 
+        init_kwargs = {**self.config_params_init, **kwargs}
         # noinspection PyArgumentList
-        self.layer = self.init_layer(**self.config_params_init)
+        self.layer = self.init_layer(**init_kwargs)
         self.init_weights()
 
     # noinspection PyMethodMayBeStatic
@@ -86,12 +87,14 @@ class PyTorchBuilderLayer:
                 raise Exception(F"Weight Init {self.weight_init_fn} not implemented.")
 
     # noinspection PyShadowingBuiltins
-    def run_forward(self, input=None):
+    def run_forward(self, input=None, **kwargs):
         # todo: determine if better way to take care of network input. and null connection 
         expected_input = self.get_input()
+
+        forward_kwargs = {**self.config_params_forward, **kwargs}
         # noinspection PyArgumentList
         self.output = self.forward(expected_input if expected_input is not None else input,
-                                   **self.config_params_forward)
+                                   **forward_kwargs)
         return self.output
 
     def forward(self, x):
@@ -131,6 +134,9 @@ class PyTorchBuilderLayer:
         else:
             return [con.output for con in self.connection]
 
+    def get_input_size(self):
+        return self.previous_size
+
     # noinspection PyMethodMayBeStatic
     def get_output_size(self):
         return self.calculate_output_size(**self.config_calculate_output_size)
@@ -164,12 +170,6 @@ class PyTorchBuilderLayerInput(PyTorchBuilderLayer):
 
     def get_output_size(self):
         return self.input_size
-
-
-# class PyTorchBuilderLayerMulti(PyTorchBuilderLayer):
-#     def __init__(self, config=None, connection=None):
-#         super(PyTorchBuilderLayerMulti, self).__init__(config, connection)
-#         self.layers = []
 
 
 class PyTorchBuilderModel(nn.Module):
@@ -226,3 +226,6 @@ class PyTorchBuilderModel(nn.Module):
         _, indices = torch.max(prediction, 1)
         acc = 100 * torch.sum(torch.eq(indices.float(), y.float()).float())/y.size()[0]
         return acc.cpu().data[0]
+
+    def get_output_layer(self):
+        return self.builder_layers[-1]

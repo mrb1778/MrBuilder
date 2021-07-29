@@ -5,7 +5,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-import mrbuilder_pytorch as mrb
+import mrbuilder as mrb
 from test_bootstrap import TestBootstrapPytorch
 
 
@@ -93,18 +93,18 @@ class TestHardcodeComparatorPytorch(unittest.TestCase, TestBootstrapPytorch.Base
                 self.layers = nn.ModuleDict()
 
                 self.layers['Conv2d'] = nn.Conv2d(1, 6, 3)
-                self.layers['ReLU'] = nn.ReLU()
+                self.layers['ReLU'] = nn.ReLU(inplace=True)
                 self.layers['MaxPool2d'] = nn.MaxPool2d(2)
 
                 self.layers['Conv2d_2'] = nn.Conv2d(6, 16, 3)
-                self.layers['ReLU_2'] = nn.ReLU()
+                self.layers['ReLU_2'] = nn.ReLU(inplace=True)
                 self.layers['MaxPool2d_2'] = nn.MaxPool2d(2)
 
                 self.layers['Flatten'] = nn.Flatten()
                 self.layers['Linear'] = nn.Linear(16 * 6 * 6, 120)
-                self.layers['ReLU_3'] = nn.ReLU()
+                self.layers['ReLU_3'] = nn.ReLU(inplace=True)
                 self.layers['Linear_2'] = nn.Linear(120, 84)
-                self.layers['ReLU_4'] = nn.ReLU()
+                self.layers['ReLU_4'] = nn.ReLU(inplace=True)
                 self.layers['Linear_3'] = nn.Linear(84, 10)
 
             def forward(self, x):
@@ -249,8 +249,8 @@ class TestHardcodeComparatorPytorch(unittest.TestCase, TestBootstrapPytorch.Base
                  "activation": "relu", "weights": "xavier_uniform", "padding": "valid"},
                 {"type": "Dropout", "rate": 0.2},
 
-                {"type": "Conv2d", "size": 64, "bias": True
-                    , "activation": "relu", "weights": "xavier_uniform", "padding": "same"},
+                {"type": "Conv2d", "size": 64, "bias": True,
+                 "activation": "relu", "weights": "xavier_uniform", "padding": "same"},
                 {"type": "MaxPool2d", "size": 2},
                 {"type": "Dropout", "rate": 0.3},
 
@@ -285,51 +285,51 @@ class TestHardcodeComparatorPytorch(unittest.TestCase, TestBootstrapPytorch.Base
 
                 # conv layers: (in_channel size, out_channels size, kernel_size, stride, padding,
                 self.layers["conv1_1"] = nn.Conv2d(3, initial_conv_size, kernel_size=kernel_size, padding=padding)
-                self.layers["relu1_1"] = nn.ReLU()
+                self.layers["relu1_1"] = nn.ReLU(inplace=True)
                 self.layers["conv1_2"] = nn.Conv2d(initial_conv_size, initial_conv_size, kernel_size=kernel_size,
                                                    padding=padding)
-                self.layers["relu1_2"] = nn.ReLU()
+                self.layers["relu1_2"] = nn.ReLU(inplace=True)
                 self.layers["pool1"] = nn.MaxPool2d(max_pool_size)
 
                 self.layers["conv2_1"] = nn.Conv2d(initial_conv_size, initial_conv_size * 2, kernel_size=kernel_size,
                                                    padding=padding)
-                self.layers["relu2_1"] = nn.ReLU()
+                self.layers["relu2_1"] = nn.ReLU(inplace=True)
                 self.layers["conv2_2"] = nn.Conv2d(initial_conv_size * 2, initial_conv_size * 2,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu2_2"] = nn.ReLU()
+                self.layers["relu2_2"] = nn.ReLU(inplace=True)
                 self.layers["pool2"] = nn.MaxPool2d(max_pool_size)
 
                 self.layers["conv3_1"] = nn.Conv2d(initial_conv_size * 2, initial_conv_size * 4,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu3_1"] = nn.ReLU()
+                self.layers["relu3_1"] = nn.ReLU(inplace=True)
                 self.layers["conv3_2"] = nn.Conv2d(initial_conv_size * 4, initial_conv_size * 4,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu3_2"] = nn.ReLU()
+                self.layers["relu3_2"] = nn.ReLU(inplace=True)
                 self.layers["conv3_3"] = nn.Conv2d(initial_conv_size * 4, initial_conv_size * 4,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu3_3"] = nn.ReLU()
+                self.layers["relu3_3"] = nn.ReLU(inplace=True)
                 self.layers["pool3"] = nn.MaxPool2d(max_pool_size)
 
                 self.layers["conv4_1"] = nn.Conv2d(initial_conv_size * 4, initial_conv_size * 8,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu4_1"] = nn.ReLU()
+                self.layers["relu4_1"] = nn.ReLU(inplace=True)
                 self.layers["conv4_2"] = nn.Conv2d(initial_conv_size * 8, initial_conv_size * 8,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu4_2"] = nn.ReLU()
+                self.layers["relu4_2"] = nn.ReLU(inplace=True)
                 self.layers["conv4_3"] = nn.Conv2d(initial_conv_size * 8, initial_conv_size * 8,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu4_3"] = nn.ReLU()
+                self.layers["relu4_3"] = nn.ReLU(inplace=True)
                 self.layers["pool4"] = nn.MaxPool2d(max_pool_size)
 
                 self.layers["conv5_1"] = nn.Conv2d(initial_conv_size * 8, initial_conv_size * 8,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu5_1"] = nn.ReLU()
+                self.layers["relu5_1"] = nn.ReLU(inplace=True)
                 self.layers["conv5_2"] = nn.Conv2d(initial_conv_size * 8, initial_conv_size * 8,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu5_2"] = nn.ReLU()
+                self.layers["relu5_2"] = nn.ReLU(inplace=True)
                 self.layers["conv5_3"] = nn.Conv2d(initial_conv_size * 8, initial_conv_size * 8,
                                                    kernel_size=kernel_size, padding=padding)
-                self.layers["relu5_3"] = nn.ReLU()
+                self.layers["relu5_3"] = nn.ReLU(inplace=True)
                 self.layers["pool5"] = nn.MaxPool2d(2, 2)
 
                 # fully connected layers
@@ -337,13 +337,13 @@ class TestHardcodeComparatorPytorch(unittest.TestCase, TestBootstrapPytorch.Base
                 self.layers["flatten"] = nn.Flatten()
 
                 self.layers["fc1"] = nn.Linear(7 * 7 * initial_conv_size * 8, 4096)
-                self.layers["relu6_1"] = nn.ReLU()
+                self.layers["relu6_1"] = nn.ReLU(inplace=True)
 
                 if _test_self.use_dropout:
                     self.layers["dropout1"] = nn.Dropout()
 
                 self.layers["fc2"] = nn.Linear(4096, initial_conv_size * 64)
-                self.layers["relu6_2"] = nn.ReLU()
+                self.layers["relu6_2"] = nn.ReLU(inplace=True)
 
                 if _test_self.use_dropout:
                     self.layers["dropout2"] = nn.Dropout()
@@ -543,7 +543,7 @@ class TestHardcodeComparatorPytorch(unittest.TestCase, TestBootstrapPytorch.Base
                 self.layers = nn.ModuleDict()
 
                 self.layers['Conv2d'] = nn.Conv2d(1, 64, kernel_size=(3, 3), stride=(2, 2))
-                self.layers['ReLU'] = nn.ReLU()
+                self.layers['ReLU'] = nn.ReLU(inplace=True)
                 self.layers['MaxPool2d'] = nn.MaxPool2d(kernel_size=3, stride=2, padding=0, dilation=1, ceil_mode=False)
 
                 self.layers['squeezed'] = nn.Conv2d(64, 16, kernel_size=(1, 1), stride=(1, 1))
@@ -586,7 +586,7 @@ class TestHardcodeComparatorPytorch(unittest.TestCase, TestBootstrapPytorch.Base
                 if _test_self.use_dropout:
                     self.layers['Dropout'] = nn.Dropout(p=0.5, inplace=False)
                 self.layers['Conv2d_2'] = nn.Conv2d(256, 3, kernel_size=(1, 1), stride=(1, 1))
-                self.layers['ReLU_2'] = nn.ReLU()
+                self.layers['ReLU_2'] = nn.ReLU(inplace=True)
                 self.layers['AdaptiveAvgPool2d'] = nn.AdaptiveAvgPool2d(output_size=[3, 3])
                 self.layers['Softmax'] = nn.Softmax()
 

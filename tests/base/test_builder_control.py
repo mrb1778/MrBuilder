@@ -58,7 +58,6 @@ class TestBuilderControl:
             self.get_builder().build(model_definition)
             model_builder = self.get_builder().get(model_definition["name"])
             model = model_builder(self.input_shape)
-            layers = model.layers
 
             self.assertEqual(3,
                              self.get_num_layers(model),
@@ -119,7 +118,6 @@ class TestBuilderControl:
         #     self.get_builder().build(model_definition)
         #     model_builder = self.get_builder().get(model_definition["name"])
         #     model = model_builder(self.input_shape)
-        #     layers = model.layers
         #
         #     self.assertEqual(5,
         #                      self.get_num_layers(model),

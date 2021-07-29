@@ -2,7 +2,7 @@ from tensorflow.keras.layers import Conv2D, Conv2DTranspose, SeparableConv2D, Dr
     Activation, LeakyReLU
 from tensorflow.keras.regularizers import l2
 
-from mrbuilder_keras.layer_registry import register_layer
+from ..layer_registry import register_layer
 
 custom_layers = {}
 

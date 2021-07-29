@@ -1,4 +1,4 @@
-from mrbuilder_keras.layer_registry import register_layer
+from ..layer_registry import register_layer
 
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dropout, MaxPooling2D, Flatten, Dense, Activation, \
     LeakyReLU, BatchNormalization, GlobalAveragePooling2D, UpSampling2D, Reshape, Concatenate, Add, LSTM

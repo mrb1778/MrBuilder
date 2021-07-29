@@ -72,3 +72,22 @@ class VariableRegistry:
 
 class VariableNotFoundException(Exception):
     pass
+
+
+class SimpleConfig:
+    def __init__(self, params) -> None:
+        super().__init__()
+        self.params = params
+
+    def __ceil__(self, name, default_value=None, repeat=0):
+        if name in self.params:
+            return self._repeat(self.params[name], repeat)
+        else:
+            return self._repeat(default_value, repeat)
+
+    @staticmethod
+    def _repeat(value, repeat):
+        if repeat > 1:
+            value = [value] * repeat
+
+        return value

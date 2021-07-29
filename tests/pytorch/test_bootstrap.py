@@ -2,7 +2,7 @@ import io
 import random
 import torch
 
-import mrbuilder_pytorch as mrb
+import mrbuilder.builders.pytorch as mrb
 from base.test_bootstrap import TestBootstrapBase
 import utils
 
@@ -15,24 +15,32 @@ class TestBootstrapPytorch:
 
         @classmethod
         def get_num_layers(cls, model):
-            return len(model.layers) + 1
+            return len(model.builder_layers)
 
         @classmethod
         def get_layer(cls, model, i):
-            return list(model.layers.values())[i]
+            return list(model.layers.values())[i-1]
 
         @classmethod
         def get_type(cls, model, i):
-            return cls.get_layer(model, 1).__class__.__name__
+            return cls.get_layer(model, i).__class__.__name__
 
         @classmethod
         def get_stride(cls, model, layer_num, dimension=0):
-            strides = cls.get_layer(model, 1).stride
+            strides = cls.get_layer(model, layer_num).stride
             return strides[0] if isinstance(strides, (list, tuple)) else strides
 
         @classmethod
         def get_size(cls, model, i):
-            return cls.get_layer(model, 1).out_channels
+            return cls.get_layer(model, i).out_channels
+
+        @classmethod
+        def get_in_channels(cls, model, i):
+            raise model.builder_layers[i].get_input_size()[0]
+
+        @classmethod
+        def get_out_channels(cls, model, i):
+            return model.builder_layers[i].get_output_size()[0]
 
         #  END TestBootstrapBase
 

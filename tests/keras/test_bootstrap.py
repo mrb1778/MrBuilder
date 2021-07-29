@@ -1,4 +1,4 @@
-import mrbuilder_keras as mrb
+import mrbuilder.builders.keras as mrb
 from base.test_bootstrap import TestBootstrapBase
 
 
@@ -29,10 +29,10 @@ class TestBootstrapKeras(TestBootstrapBase):
         return model.layers[i].filters
 
     @classmethod
-    def get_in_size(cls, model, i):
-        return model.layers[i].input.shape
+    def get_in_channels(cls, model, i):
+        return model.layers[i].input.shape[-1]
 
     @classmethod
-    def get_out_size(cls, model, i):
-        return model.layers[i].output.shape
+    def get_out_channels(cls, model, i):
+        return model.layers[i].output.shape[-1]
 

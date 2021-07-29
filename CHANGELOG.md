@@ -75,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.9.0] - 2020-02-04
 ### Changed
-- Moved Keras Implementation to separate Repo "mrbuilder_keras"
+- Moved Keras Implementation to separate Repo "mrbuilder.builders.keras"
 - Removed public implementation from Core Repo
 - Moved Test Cases for implementation to Keras Repo
 - Simplified naming for core methods

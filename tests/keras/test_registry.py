@@ -1,6 +1,5 @@
 import unittest
 
-import mrbuilder_keras as mrb
 from base.test_registry import TestBuilderRegistry
 from test_bootstrap import TestBootstrapKeras
 
