@@ -43,9 +43,7 @@ class BuilderRegistry:
             return self.layers_builders[layer_type]
         else:
             raise MissingLayerTypeException(
-                "Unknown Layer Type: {}.  Valid Types are {}".format(
-                    layer_type,
-                    self.layers_builders.keys()))
+                f"Unknown Layer Type: {layer_type}.  Valid Types are {self.layers_builders.keys()}")
 
     def has_layer_builder(self, layer_type: str) -> bool:
         return layer_type in self.layers_builders
@@ -61,7 +59,7 @@ class BuilderRegistry:
         if name in self.layer_attribute_builders:
             return self.layer_attribute_builders[name]
         else:
-            raise Exception("Unknown Layer Option: {}".format(name))
+            raise Exception(f"Unknown Layer Option: {name}")
 
     def has_layer_attribute_builder(self, name: str) -> bool:
         return name in self.layer_attribute_builders
@@ -83,7 +81,7 @@ class BuilderRegistry:
             return self.model_builders[name]
         else:
             raise MissingModelBuilderException(
-                "Model Builder not found {} in model builders: {}".format(name, [*self.model_builders.keys()]))
+                f"Model Builder not found {name} in model builders: {[*self.model_builders.keys()]}")
 
     def is_model_builder_registered(self, name: str) -> bool:
         return name in self.model_builders

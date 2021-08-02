@@ -87,7 +87,7 @@ class TestBootstrapPytorch:
             # noinspection PyUnresolvedReferences
             self.assertTrue(torch.equal(n1_output,
                                         n2_output),
-                            "outputs do not match \n{}\n{}".format(n1_output, n2_output))
+                            f"outputs do not match \n{n1_output}\n{n2_output}")
 
         def compare_network_parameters(self, n1, n2):
             n1_params = list(n1.parameters())
