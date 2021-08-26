@@ -250,7 +250,7 @@ class ViewBuilderLayer(PyTorchBuilderLayer):
         self.shape = shape
 
     def forward(self, x, shape=None):
-        return x.layer.view(-1, *shape)
+        return x.view(-1, *shape)
 
     def get_output_size(self):
         return self.shape
