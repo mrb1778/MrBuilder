@@ -253,7 +253,7 @@ class ViewBuilderLayer(PyTorchBuilderLayer):
         return x.layer.view(-1, *shape)
 
     def get_output_size(self):
-        return (-1, *self.shape)
+        return self.shape
 
 
 @register_layer("Roll")
