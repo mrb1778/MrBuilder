@@ -241,8 +241,19 @@ class LSTMBuilderLayer(PyTorchBuilderLayer):
 
 @register_layer("View", "Reshape")
 class ViewBuilderLayer(PyTorchBuilderLayer):
+    def __init__(self, config=None, connection=None):
+        super().__init__(config, connection)
+        self.shape = None
+
+    def init_layer(self, shape=None):
+        super().init_layer()
+        self.shape = shape
+
     def forward(self, x, shape=None):
         return x.layer.view(-1, *shape)
+
+    def get_output_size(self):
+        return (-1, *self.shape)
 
 
 @register_layer("Roll")
