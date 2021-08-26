@@ -32,6 +32,7 @@ class PyTorchBuilderLayer:
             self.name = config("name", self.name)
 
     def _populate_config_params(self, config):
+        # noinspection PyNoneFunctionAssignment
         activation_fn_name = self.get_activation_fn_name()
         self.config_activation_fn = activation_fn_name \
             if activation_fn_name is not None else config(self.get_activation_fn_key())

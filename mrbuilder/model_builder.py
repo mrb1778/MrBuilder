@@ -153,6 +153,7 @@ class ModelBuilder:
 
             if model_args is None:
                 model_args = {}
+            model_args["inputShape"] = input_shape
             model_args.update(kwargs)
             if len(model_args):
                 # todo: move snake / camel logic to variable_registry retrieval to make global

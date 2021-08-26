@@ -146,7 +146,7 @@ class FlattenBuilderLayer(PyTorchBuilderLayer):
 
 @register_layer("Concat", "Concatenate", "cat")
 class ConcatBuilderLayer(PyTorchBuilderLayer):
-    def forward(self, x, axis=0):
+    def forward(self, x, axis=1):
         return torch.cat(x, axis)
 
     def calculate_output_size(self, axis=1):
@@ -241,13 +241,19 @@ class LSTMBuilderLayer(PyTorchBuilderLayer):
 
 @register_layer("View", "Reshape")
 class ViewBuilderLayer(PyTorchBuilderLayer):
-    def forward(self, x, training=True):
-        return x.layer.view()
+    def forward(self, x, shape=None):
+        return x.layer.view(-1, *shape)
+
+
+@register_layer("Roll")
+class RollBuilderLayer(PyTorchBuilderLayer):
+    def forward(self, x, shift=0, axis=0):
+        return torch.roll(x, shifts=shift, dims=axis)
 
 
 @register_layer("SizeOf", "Print", "Debug")
 class SizeOfBuilderLayer(PyTorchBuilderLayer):
-    def forward(self, x, training=True):
+    def forward(self, x):
         print(self.name, "is size:", x.size(), "previous size", self.previous_size)
         return x
 

@@ -2,22 +2,18 @@
 Model and Repository Builder for Deep Learning with an emphasis on Keras / Tensorflow
 
 ```python
-import mrbuilder_keras as mrb  # used to initialize Keras builder
+import mrbuilder.builders.keras as mrb  # used to initialize Keras builder
 
 mrb.load("/path/to/models")
-
 model_builder = mrb.get_model("vgg16")
-
 
 input_shape = [32, 32, 3]
 model_params = {
-    "initialDropoutRate": 0.35, 
+    "initialDropoutRate": 0.35,
     "dropoutRate": 0.45,
     "outputSize": 50
 }
 model = model_builder(input_shape, model_params)
-
-
 model.summary()
 ```
 
