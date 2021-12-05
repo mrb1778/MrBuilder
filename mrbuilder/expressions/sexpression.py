@@ -78,7 +78,7 @@ class SimpleExpressionEvaluator(ExpressionEvaluator):
             return left >= right
         elif middle == "<":
             return left < right
-        elif middle == "<":
+        elif middle == "<=":
             return left <= right
         elif middle == "==" or middle == "=":
             return left == right
