@@ -217,16 +217,16 @@ class PyTorchBuilderModel(nn.Module):
             if self.name is not None \
             else self.__class__.__name__
 
-    def predict(self, x):
-        # todo: handle batch 1
-        x = F.softmax(self.forward(x))
-        return x
-
-    def accuracy(self, x, y):
-        prediction = self.predict(x)
-        _, indices = torch.max(prediction, 1)
-        acc = 100 * torch.sum(torch.eq(indices.float(), y.float()).float())/y.size()[0]
-        return acc.cpu().data[0]
+    # def predict(self, x):
+    #     # todo: handle batch 1
+    #     x = F.softmax(self.forward(x))
+    #     return x
+    #
+    # def accuracy(self, x, y):
+    #     prediction = self.predict(x)
+    #     _, indices = torch.max(prediction, 1)
+    #     acc = 100 * torch.sum(torch.eq(indices.float(), y.float()).float())/y.size()[0]
+    #     return acc.cpu().data[0]
 
     def get_output_layer(self):
         return self.builder_layers[-1]

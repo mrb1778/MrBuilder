@@ -3,6 +3,7 @@ from typing import Dict
 
 from .builder import builder
 
+
 # Public Interface Methods
 def register_layer_builder(layer_type: str, layer_builder: Callable) -> None:
     builder.add_layer_builder(layer_type, layer_builder)
