@@ -1,10 +1,10 @@
-from ..layer_registry import register_layer
+from ..layer_registry import layer
 
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, Dropout, MaxPooling2D, Flatten, Dense, Activation, \
     LeakyReLU, BatchNormalization, GlobalAveragePooling2D, UpSampling2D, Reshape, Concatenate, Add, LSTM
 
 
-@register_layer("Conv2D")
+@layer("Conv2D")
 def mrb_layer_Conv2D(config, connection):
     return Conv2D(
         filters=config("size"),
@@ -17,7 +17,7 @@ def mrb_layer_Conv2D(config, connection):
     )(connection)
 
 
-@register_layer("Conv2DTranspose")
+@layer("Conv2DTranspose")
 def mrb_layer_Conv2DTranspose(config, connection):
     return Conv2DTranspose(
         filters=config("size"),
@@ -29,12 +29,12 @@ def mrb_layer_Conv2DTranspose(config, connection):
     )(connection)
 
 
-@register_layer("Dropout")
+@layer("Dropout")
 def mrb_layer_Dropout(config, connection):
     return Dropout(config("rate", 0.25))(connection)
 
 
-@register_layer("MaxPooling2D")
+@layer("MaxPooling2D")
 def mrb_layer_MaxPooling2D(config, connection):
     return MaxPooling2D(
         pool_size=config("size", 2, repeat=2),
@@ -42,12 +42,12 @@ def mrb_layer_MaxPooling2D(config, connection):
     )(connection)
 
 
-@register_layer("Flatten")
+@layer("Flatten")
 def mrb_layer_Flatten(config, connection):
     return Flatten()(connection)
 
 
-@register_layer("Dense")
+@layer("Dense")
 def mrb_layer_Dense(config, connection):
     return Dense(
         config("size"),
@@ -57,47 +57,47 @@ def mrb_layer_Dense(config, connection):
     )(connection)
 
 
-@register_layer("Activation")
+@layer("Activation")
 def mrb_layer_Activation(config, connection):
     return Activation(config("function"))(connection)
 
 
-@register_layer("LeakyReLU")
+@layer("LeakyReLU")
 def mrb_layer_LeakyReLU(config, connection):
     return LeakyReLU(alpha=config("alpha", 0.3))(connection)
 
 
-@register_layer("BatchNormalization", "BatchNorm2d", "BatchNorm")
+@layer("BatchNormalization", "BatchNorm2d", "BatchNorm")
 def mrb_layer_BatchNormalization(config, connection):
     return BatchNormalization(momentum=config("momentum", 0.99))(connection)
 
 
-@register_layer("GlobalAveragePooling2D")
+@layer("GlobalAveragePooling2D")
 def mrb_layer_GlobalAveragePooling2D(config, connection):
     return GlobalAveragePooling2D()(connection)
 
 
-@register_layer("UpSampling2D")
+@layer("UpSampling2D")
 def mrb_layer_UpSampling2D(config, connection):
     return UpSampling2D(config("size", 2))(connection)
 
 
-@register_layer("Reshape")
+@layer("Reshape")
 def mrb_layer_Reshape(config, connection):
     return Reshape(target_shape=config("shape"))(connection)
 
 
-@register_layer("Concatenate")
+@layer("Concatenate")
 def mrb_layer_Concatenate(config, connection):
     return Concatenate(axis=config("axis", -1))(connection)
 
 
-@register_layer("Add")
+@layer("Add")
 def mrb_layer_Add(config, connection):
     return Add()(connection)
 
 
-@register_layer("LSTM")
+@layer("LSTM")
 def mrb_layer_LSTM(config, connection):
     return LSTM(
         units=config("size"),

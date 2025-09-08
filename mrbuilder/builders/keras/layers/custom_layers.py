@@ -2,7 +2,7 @@ from tensorflow.keras.layers import Conv2D, Conv2DTranspose, SeparableConv2D, Dr
     Activation, LeakyReLU
 from tensorflow.keras.regularizers import l2
 
-from ..layer_registry import register_layer
+from ..layer_registry import layer
 
 custom_layers = {}
 
@@ -64,7 +64,7 @@ def conv_act_bn(
     return x
 
 
-@register_layer("ConvActBN")
+@layer("ConvActBN")
 def conv_act_bn_wrapper(config, connection):
     return conv_act_bn(x=connection,
                        size=config("size"),

@@ -1,9 +1,9 @@
 from ..builder_models import PyTorchBuilderLayer
-from ..layer_registry import register_layer
+from ..layer_registry import layer
 from ..layers.standard_layers import Conv2dBuilderLayer, BatchNorm2dBuilderLayer
 
 
-@register_layer("ConvActBN")
+@layer("ConvActBN")
 class ConvActBNBuilderLayer(PyTorchBuilderLayer):
     def __init__(self, config=None, connection=None):
         super().__init__(config, connection)
@@ -28,7 +28,7 @@ class ConvActBNBuilderLayer(PyTorchBuilderLayer):
         return x
 
 
-@register_layer("SeparableConv2d")
+@layer("SeparableConv2d")
 class SeparableConv2d(PyTorchBuilderLayer):
     def __init__(self, config=None, connection=None):
         super().__init__(config, connection)

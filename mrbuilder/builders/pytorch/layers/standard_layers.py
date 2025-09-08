@@ -3,11 +3,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from ..builder_models import PyTorchBuilderLayer
-from ..layer_registry import register_layer
+from ..layer_registry import layer
 import mrbuilder.utils as mrbu
 
 
-@register_layer("Conv2d")
+@layer("Conv2d")
 class Conv2dBuilderLayer(PyTorchBuilderLayer):
     def __init__(self, config=None, connection=None):
         super().__init__(config, connection)
@@ -98,13 +98,13 @@ class Conv2dBuilderLayer(PyTorchBuilderLayer):
             return None
 
 
-@register_layer("Dropout")
+@layer("Dropout")
 class DropoutBuilderLayer(PyTorchBuilderLayer):
     def init_layer(self, rate=0.5):
         return nn.Dropout(rate)
 
 
-@register_layer("Linear", "Dense")
+@layer("Linear", "Dense")
 class LinearBuilderLayer(PyTorchBuilderLayer):
     def __init__(self, config=None, connection=None):
         super().__init__(config, connection)
@@ -124,13 +124,13 @@ class LinearBuilderLayer(PyTorchBuilderLayer):
         return [self.out_size, *self.previous_size[1:]]
 
 
-@register_layer("BatchNorm2d", "BatchNorm", "BatchNormalization")
+@layer("BatchNorm2d", "BatchNorm", "BatchNormalization")
 class BatchNorm2dBuilderLayer(PyTorchBuilderLayer):
     def init_layer(self, size=None):
         return nn.BatchNorm2d(num_features=self.previous_size[0] if size is None else size)
 
 
-@register_layer("Flatten")
+@layer("Flatten")
 class FlattenBuilderLayer(PyTorchBuilderLayer):
     def init_layer(self, dimension=1):
         return nn.Flatten(dimension)
@@ -144,7 +144,7 @@ class FlattenBuilderLayer(PyTorchBuilderLayer):
         return [result]
 
 
-@register_layer("Concat", "Concatenate", "cat")
+@layer("Concat", "Concatenate", "cat")
 class ConcatBuilderLayer(PyTorchBuilderLayer):
     def forward(self, x, axis=1):
         return torch.cat(x, axis)
@@ -161,7 +161,7 @@ class ConcatBuilderLayer(PyTorchBuilderLayer):
         return output_sizes
 
 
-@register_layer("MaxPool2d", "maxpooling2d")
+@layer("MaxPool2d", "maxpooling2d")
 class MaxPool2dBuilderLayer(PyTorchBuilderLayer):
     def __init__(self, config=None, connection=None):
         super().__init__(config, connection)
@@ -175,7 +175,7 @@ class MaxPool2dBuilderLayer(PyTorchBuilderLayer):
         return [self.previous_size[0], *[item // self.pool_size for item in self.previous_size[1:]]]
 
 
-@register_layer("AdaptiveAvgPool2d", "GlobalAveragePooling2D")
+@layer("AdaptiveAvgPool2d", "GlobalAveragePooling2D")
 class AdaptiveAvgPool2dBuilderLayer(PyTorchBuilderLayer):
     def __init__(self, config=None, connection=None):
         super().__init__(config, connection)
@@ -200,31 +200,31 @@ class AdaptiveAvgPool2dBuilderLayer(PyTorchBuilderLayer):
         return [output_size]
 
 
-@register_layer("Activation")
+@layer("Activation")
 class ActivationBuilderLayer(PyTorchBuilderLayer):
     def get_activation_fn_key(self):
         return "function"
 
 
-@register_layer("ReLU")
+@layer("ReLU")
 class ReLUBuilderLayer(PyTorchBuilderLayer):
     def init_layer(self):
         return nn.ReLU(inplace=True)
 
 
-@register_layer("Softmax")
+@layer("Softmax")
 class SoftmaxBuilderLayer(PyTorchBuilderLayer):
     def init_layer(self):
         return nn.Softmax()
 
 
-@register_layer("LeakyRelu")
+@layer("LeakyRelu")
 class LeakyReLUBuilderLayer(PyTorchBuilderLayer):
     def init_layer(self):
         return nn.LeakyReLU()
 
 
-@register_layer("LSTM")
+@layer("LSTM")
 class LSTMBuilderLayer(PyTorchBuilderLayer):
     def init_layer(self, in_size=None, size=None):
         return nn.LSTM(input_size=self.previous_size[0] if in_size is None else in_size,
@@ -239,7 +239,7 @@ class LSTMBuilderLayer(PyTorchBuilderLayer):
             return super().forward(x)
 
 
-@register_layer("View", "Reshape")
+@layer("View", "Reshape")
 class ViewBuilderLayer(PyTorchBuilderLayer):
     def __init__(self, config=None, connection=None):
         super().__init__(config, connection)
@@ -256,13 +256,13 @@ class ViewBuilderLayer(PyTorchBuilderLayer):
         return self.shape
 
 
-@register_layer("Roll")
+@layer("Roll")
 class RollBuilderLayer(PyTorchBuilderLayer):
     def forward(self, x, shift=0, axis=0):
         return torch.roll(x, shifts=shift, dims=axis)
 
 
-@register_layer("SizeOf", "Print", "Debug")
+@layer("SizeOf", "Print", "Debug")
 class SizeOfBuilderLayer(PyTorchBuilderLayer):
     def forward(self, x):
         print(self.name, "is size:", x.size(), "previous size", self.previous_size)
