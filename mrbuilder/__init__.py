@@ -8,6 +8,7 @@ try:
         build, \
         register_layer_builders
 except ImportError as e:
+    print("Pytorch not installed, skipping pytorch builder", e)
     try:
         import tensorflow as tf
         from .builders.keras import \

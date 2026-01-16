@@ -1,5 +1,4 @@
-from collections import Callable
-from typing import Dict
+from typing import Dict, Callable
 
 from .builder import builder
 
