@@ -1,0 +1,43 @@
+[project]
+name = "MrBuilder"
+version = "1.0.2"
+description = "A builder for maintainable, extensible, and cross platform deep learning model creation"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "Apache License"}
+authors = [
+    { name = "Michael R. Bernstein", email = "mrb1778@gmail.com" }
+]
+keywords = [
+    "deep learning",
+    "neural networks",
+    "machine learning",
+    "scientific computations",
+    "tensorflow",
+    "keras",
+    "pytorch"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research"
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/mrb1778/mrbuilder"
+
+
+[project.optional-dependencies]
+pytorch = [
+    "torch>=2.11.0",
+    "torchvision>=0.26.0"
+]
+tensorflow = [
+    "tensorflow>=2.21.0"
+]
+
+
+
+
