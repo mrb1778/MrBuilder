@@ -28,6 +28,9 @@ dependencies = []
 [project.urls]
 Homepage = "https://github.com/mrb1778/mrbuilder"
 
+[tool.poetry]
+packages = [{ include = "mrbuilder" }]
+
 
 [project.optional-dependencies]
 pytorch = [
